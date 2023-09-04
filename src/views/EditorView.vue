@@ -44,7 +44,8 @@ nav a.router-link-exact-active {
   color: #42b983;
 }
 
-.p5Canvas {
+/* p5Canvas */
+div.p5Canvas canvas {
   box-shadow: 5px 7px 6px -3px rgba(0, 0, 0, 0.75);
   -webkit-box-shadow: 5px 7px 6px -3px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 5px 7px 6px -3px rgba(0, 0, 0, 0.75);
