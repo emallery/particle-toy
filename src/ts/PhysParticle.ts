@@ -53,7 +53,8 @@ export class PhysParticle implements Sprite, UsesSettings {
     this.position.add(this.velocity);
 
     // Apply damping force to slow movement in the sprite's current direction
-    this.velocity.mult(this.damping);
+    // this.velocity.mult(this.damping);
+    this.velocity.x *= this.damping;
 
     this.angularVelocity += this.angularAcceleration;
     this.angle += this.angularVelocity;
@@ -88,9 +89,30 @@ export class PhysParticle implements Sprite, UsesSettings {
     if (this.settings.debug) {
       p.stroke(6);
       p.line(0, 0, this.position.x, this.position.y);
-      p.textSize(10);
-      p.fill(0);
-      p.text(`FPS: ${p.frameRate()}`, -240, -240);
     }
+  }
+
+  reset(position: p5.Vector, p: p5) {
+    // TODO: This is the reset function specifically for leaves.... make it parameterized?
+
+    this.position.set(position);
+    this.velocity.set(0, 0);
+    this.acceleration.set(0, 0);
+
+    const v = 1 / p.frameRate(); // factor for velocity
+    const a = (v * v);         // factor for acceleration
+
+    this.position.x += (p.random() * 40) - 20;
+    this.position.y += (p.random() * 250) - 200;
+
+    this.velocity.x = (-200 + (p.random() * 150)) * v;
+    this.velocity.y = ((p.random() * 50) - 25) * v;
+
+    this.damping = 1 - (p.random() * 30) * a; //(p.random() * 20) * a;
+
+    this.acceleration.y += 30 * a; // gravity
+
+    this.angle = 0;
+    this.angularVelocity = ((p.random() * 0.02) - 0.01) * 60 * v;
   }
 }

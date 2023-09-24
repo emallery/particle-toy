@@ -8,21 +8,24 @@
 import { defineComponent, onMounted, ref, watch } from 'vue';
 import p5 from 'p5';
 import { old } from '../ts/old';
-import { PhysParticle, Settings } from '@/ts/PhysParticle';
+import { Settings } from '@/ts/PhysParticle';
+import { ParticleSpawner } from '@/ts/ParticleSpawner';
 
 export default defineComponent({
   name: "P5Component",
+  // props: {
+    
+  // },
   setup() {
     const debugBox = ref(false);
     let settings = new Settings(debugBox.value, 512, 512);
 
-    watch(debugBox, (nV, _oV) => {
-      settings.debug = nV;
-      console.log(nV);
+    watch(debugBox, newValue => {
+      settings.debug = newValue;
     });
 
     onMounted(() => {
-      const holder = document.getElementById("sketch-holder");
+      const holder = document.getElementById("sketch-holder") as HTMLElement;
       let spawner;
 
       const s = (sketch: p5) => {
@@ -35,17 +38,15 @@ export default defineComponent({
           sketch.background(0, 0, 0, 0);
         };
 
-        sketch.draw = () => {
-          // sketch.background(255, 0, 255);
-          // sketch.fill(255);
-          // sketch.rect(myp5.mouseX, myp5.mouseY, 50, 50);
+        sketch.draw = () => {          
           sketch.clear(0, 0, 0, 0);
+          // sketch.rect(myp5.mouseX, myp5.mouseY, 50, 50);
           spawner.update();
           spawner.draw();
         };
       };
 
-      let myp5 = new p5(s, holder as HTMLElement);
+      let myp5 = new p5(s, holder);
       let w = 512;
       let h = 512;
       spawner = new old.ParticleSpawner((w / 2), -(h / 2), 20, Infinity, myp5);
@@ -55,9 +56,12 @@ export default defineComponent({
       const holder1 = document.getElementById("sketch-holder1");
 
       let anotherP5 = new p5((s: p5) => {
+        
+        let myFont: p5.Font;
+        let maple: p5.Image;
+        let leaf: p5.Image;
 
-        let particle = new PhysParticle(new p5.Vector(0, 0), new p5.Vector(0, -30), new p5.Vector(0, 2.0), 0, 0, 0, 1.0, 1.0, s.color(255, 255, 255), s.loadImage("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEABAMAAACuXLVVAAABhGlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AcxV9Ti1IqDmYQdchQnSyIiugmVSyChdJWaNXB5NIvaNKQtLg4Cq4FBz8Wqw4uzro6uAqC4AeIo5OToouU+L+k0CLGg+N+vLv3uHsHCI0y06yucUDTq2YyFpUy2VWp+xVBDEHELAIys4x4ajENz/F1Dx9f7yI8y/vcn6NXzVkM8EnEc8wwq8QbxNObVYPzPrHIirJKfE48ZtIFiR+5rrj8xrngsMAzRTOdnCcWiaVCBysdzIqmRjxFHFY1nfKFjMsq5y3OWrnGWvfkLwzl9JUU12kOI4YlxJGABAU1lFBGFRFadVIsJGk/6uEfdPwJcinkKoGRYwEVaJAdP/gf/O7Wyk9OuEmhKBB4se2PEaB7F2jWbfv72LabJ4D/GbjS2/5KA5j5JL3e1sJHQN82cHHd1pQ94HIHGHgyZFN2JD9NIZ8H3s/om7JA/y0QXHN7a+3j9AFIU1fLN8DBITBaoOx1j3f3dPb275lWfz+5DXLDI162swAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB+YKGxUBCbtLcn4AAAAPUExURQAAAM4AAM4xAP9jAP////UR5/kAAAABdFJOUwBA5thmAAAAAWJLR0QEj2jZUQAAAOBJREFUeNrt3LEJgDAQQNGs4AbqBKIj6P4zWZkIWgiSU/T9MkXulYGQpCRJd5q2BgAAAAAAAAAAgKcBuwAAAAAAAAAAAAAeB4RSAAAAAAAAAAAA3gMY+1wB5KUWAAAAAAAAAACgPmB3ed0fAwAAAAAAAAAAAIgFnFAAAAAAAAAAAAB+CwgIAAAAAAAAAAAAAAAAAAAAAAAAIAAwXQsAAAAAAAAAAOBzgLLzsjWfza12PQ0AAAAAAAAAAHDxJAgAAAAAAAAAAAAQ8d1NHtE1ufKiOdUPAAAAAAAAAAAAQFL1ViXFxlqWbFFAAAAAAElFTkSuQmCC"), settings);
-        let myFont;
+        let newSpawner: ParticleSpawner;
 
         s.preload = () => {
           // myFont = s.loadFont("https://fonts.googleapis.com/css2?family=Inconsolata&display=swap");
@@ -65,6 +69,10 @@ export default defineComponent({
           // https://www.google.com/search?q=vue+router+return+file+in+assets+folder
           // eslint-disable-next-line
           myFont = s.loadFont(require("@/assets/JetBrainsMono-Regular.ttf"));
+          // eslint-disable-next-line
+          maple = s.loadImage(require("@/assets/maple.png"));
+          // eslint-disable-next-line
+          leaf = s.loadImage(require("@/assets/leaf.png"));
         };
 
         s.setup = () => {
@@ -74,20 +82,32 @@ export default defineComponent({
           s.setAttributes('perPixelLighting', false); // fix issues with tint() on WEBGL canvas
           s.background(0, 0, 0, 0);
           s.textFont(myFont);
+
+          newSpawner = new ParticleSpawner(settings, s, new p5.Vector((settings.canvasX / 2), -(settings.canvasY / 2)), [leaf, maple]);
         };
+
+        // Put lots of frame rate readings into a buffer so we can average over many frames
+        let frameRateBuffer: number[] = new Array(30).fill(0);
+        let displayFrameRate = 0;
 
         s.draw = () => {
           s.clear(0, 0, 0, 0);
 
-          particle.update();
-          particle.draw(s);
+          frameRateBuffer.unshift(s.frameRate());
+          frameRateBuffer.pop();
 
-          if (particle.position.y > settings.canvasY / 1.5)
-          {
-            particle.position.set(0, 0);
-            let randX = s.random(-20, 20);
-            let randY = s.random(-30, -10);
-            particle.velocity.set(randX, randY);
+          newSpawner.update();
+          newSpawner.draw();
+
+          if (settings.debug) {
+            // Only update frame rate to show every couple of frames
+            if (s.frameCount % 4 == 0) {
+              displayFrameRate = frameRateBuffer.reduce((a, b) => a + b) / frameRateBuffer.length;
+            }
+
+            s.textSize(10);
+            s.fill(0);
+            s.text(`FPS: ${displayFrameRate.toFixed(3)}`, -240, -240);
           }
         };
       }, holder1 as HTMLElement);
