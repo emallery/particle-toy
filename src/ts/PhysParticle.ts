@@ -30,11 +30,11 @@ export class PhysParticle implements Sprite, UsesSettings {
   angularAcceleration: number;
   damping: number;
   scale: number;
-  tint: p5.Color;
+  tint: number[];
   readonly image: p5.Image;
   readonly settings: Settings;
 
-  constructor(position: p5.Vector, velocity: p5.Vector, acceleration: p5.Vector, angle: number, va: number, aa: number, damping: number, scale: number, tint: p5.Color, image: p5.Image, settings: Settings) {
+  constructor(position: p5.Vector, velocity: p5.Vector, acceleration: p5.Vector, angle: number, va: number, aa: number, damping: number, scale: number, tint: number[], image: p5.Image, settings: Settings) {
     this.position = position;
     this.velocity = velocity;
     this.acceleration = acceleration;
@@ -70,7 +70,7 @@ export class PhysParticle implements Sprite, UsesSettings {
     const distanceMapped = distance / (this.settings.canvasX / 2) * 1.5; // Map [-1.5, 1.5] to the edges of the canvas
     const alphaValue = 255 / (1 + Math.pow(distanceMapped, 8)); // https://www.desmos.com/calculator/nh9k6jruzc
 
-    p.tint(p.red(this.tint), p.green(this.tint), p.blue(this.tint), alphaValue);
+    p.tint(this.tint[0], this.tint[1], this.tint[2], alphaValue);
     //tint(255, alphaValue); // Uncomment to disable color tint
 
     // Transform the canvas appropriately
@@ -102,17 +102,17 @@ export class PhysParticle implements Sprite, UsesSettings {
     const v = 1 / p.frameRate(); // factor for velocity
     const a = (v * v);         // factor for acceleration
 
-    this.position.x += (p.random() * 40) - 20;
-    this.position.y += (p.random() * 250) - 200;
+    this.position.x += (Math.random() * 40) - 20;
+    this.position.y += (Math.random() * 250) - 200;
 
-    this.velocity.x = (-200 + (p.random() * 150)) * v;
-    this.velocity.y = ((p.random() * 50) - 25) * v;
+    this.velocity.x = (-200 + (Math.random() * 150)) * v;
+    this.velocity.y = ((Math.random() * 50) - 25) * v;
 
-    this.damping = 1 - (p.random() * 30) * a; //(p.random() * 20) * a;
+    this.damping = 1 - (Math.random() * 30) * a; //(Math.random() * 20) * a;
 
     this.acceleration.y += 30 * a; // gravity
 
     this.angle = 0;
-    this.angularVelocity = ((p.random() * 0.02) - 0.01) * 60 * v;
+    this.angularVelocity = ((Math.random() * 0.02) - 0.01) * 60 * v;
   }
 }
