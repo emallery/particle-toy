@@ -14,6 +14,7 @@ import P5Component from '@/components/P5Component.vue';
 import { Settings } from '@/ts/PhysParticle';
 import { ParticleSpawner } from '@/ts/ParticleSpawner';
 import p5 from 'p5';
+import { getLeaves, respawnLeaf } from '@/ts/Leaves';
 
 const debugBox = ref(false);
 
@@ -23,21 +24,7 @@ watch(debugBox, newValue => {
   settings.debug = newValue;
 });
 
-let leaf: p5.Image = undefined as unknown as p5.Image;
-let maple: p5.Image = undefined as unknown as p5.Image;
-
-const dummyP5 = new p5((s: p5) => {
-  s.preload = () => {
-    // eslint-disable-next-line
-    maple = s.loadImage(require("@/assets/maple.png"));
-    // eslint-disable-next-line
-    leaf = s.loadImage(require("@/assets/leaf.png"));
-  };
-});
-
-dummyP5.preload();
-
-const newSpawner = new ParticleSpawner(settings, new p5.Vector((settings.canvasX / 2), -(settings.canvasY / 2)), [leaf, maple]);
+const newSpawner = new ParticleSpawner(settings, new p5.Vector((settings.canvasX / 2), -(settings.canvasY / 2)), getLeaves(settings), respawnLeaf);
 
 const spawners = [newSpawner];
 
