@@ -2,33 +2,55 @@
   <div class="home">
     <h1>Pretend this is the editor.</h1>
     <P5Component :spawners="spawners" />
+
+    <label>
+      Preset:
+      <select v-model="selectedPreset">
+        <option>Leaves</option>
+        <option>Drops</option>
+      </select>
+    </label>
+    <br>
+
     <label>Debug? <input type="checkbox" v-model="debugBox"></label>
     <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
   </div>
 </template>
   
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, defineModel } from 'vue';
 import HelloWorld from '@/components/HelloWorld.vue'; // @ is an alias to /src
 import P5Component from '@/components/P5Component.vue';
 import { Settings } from '@/ts/PhysParticle';
 import { ParticleSpawner } from '@/ts/ParticleSpawner';
 import p5 from 'p5';
 import { getLeaves, respawnLeaf } from '@/ts/Leaves';
+import { getDrops, respawnDrop } from '@/ts/Drops';
 
 const debugBox = ref(false);
+const selectedPreset = defineModel({ default: "Leaves" });
 
 let settings = new Settings(debugBox.value, 512, 512);
+const spawners = new Array<ParticleSpawner>();
+
+// Gaurantee that a spawner always exists
+spawners[0] = new ParticleSpawner(settings, new p5.Vector((settings.canvasX / 2), -(settings.canvasY / 2)), getLeaves(settings), respawnLeaf);
 
 watch(debugBox, newValue => {
   settings.debug = newValue;
 });
 
-const newSpawner = new ParticleSpawner(settings, new p5.Vector((settings.canvasX / 2), -(settings.canvasY / 2)), getLeaves(settings), respawnLeaf);
-
-const spawners = [newSpawner];
-
-// URI Hash seems safe (in Chrome) to at least 50 million characters. Warn for IE + Edge at 2,025 (https://stackoverflow.com/questions/16247162/max-size-of-location-hash-in-browser)
+watch(selectedPreset, newValue => {
+  // FIXME: Use an enum for the v-model and this
+  if (newValue === "Leaves") {
+    const newSpawner = new ParticleSpawner(settings, new p5.Vector((settings.canvasX / 2), -(settings.canvasY / 2)), getLeaves(settings), respawnLeaf);
+    spawners[0] = newSpawner;
+  }
+  else if (newValue === "Drops") {
+    const newSpawner = new ParticleSpawner(settings, new p5.Vector((settings.canvasX / 2), -(settings.canvasY / 2)), getDrops(settings), respawnDrop);
+    spawners[0] = newSpawner;
+  }
+});
 </script>
 
 <style>
