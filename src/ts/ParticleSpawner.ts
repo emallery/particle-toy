@@ -6,39 +6,21 @@ export class ParticleSpawner implements UsesSettings {
     readonly position: p5.Vector;
 
     readonly particles: PhysParticle[] = [];
+    readonly respawn: (s: PhysParticle, position: p5.Vector, frameRate: number) => void;
 
-    constructor(settings: Settings, position: p5.Vector, img: Array<p5.Image>) {
+    constructor(settings: Settings, position: p5.Vector, particles: Array<PhysParticle>, respawn: (s: PhysParticle, position: p5.Vector, frameRate: number) => void) {
         this.settings = settings;
         this.position = position;
-        const numParticles = 20;
-
-        for (let i = 0; i < numParticles; i++) {
-
-            if (Math.random() > 0.5) {
-                // Green leaf
-                const scale = 0.18 + (Math.random() * 0.1);
-                const r = 220 - (Math.random() * 20);
-                const g = 220 - (Math.random() * 20);
-                const b = 220 - (Math.random() * 20);
-
-                this.particles.push(new PhysParticle(new p5.Vector(Infinity, 0), new p5.Vector(0, 0), new p5.Vector(10, 0), 0, 0, 0, 0, scale, [r, g, b], img[0], this.settings));
-            }
-            else {
-                // Maple
-                const scale = 0.3 + (Math.random() * 0.2);
-                const r = 240 - (Math.random() * 80);
-                const g = 90 - (Math.random() * 20);
-                const b = 10 - (Math.random() * 10);
-
-                this.particles.push(new PhysParticle(new p5.Vector(Infinity, 0), new p5.Vector(0, 0), new p5.Vector(10, 0), 0, 0, 0, 0, scale, [r, g, b], img[1], this.settings));
-            }
-        }
+        this.particles = particles;
+        this.respawn = respawn;
     }
 
     update(p: p5) {
+        const frameRate = p.frameRate();
+
         for (const particle of this.particles) {
             if (particle.position.x > 1000 || particle.position.x < -1000 || particle.position.y > 1000 || particle.position.y < -1000) {
-                particle.reset(this.position, p);
+                this.respawn(particle, this.position, frameRate);
             }
 
             particle.update();

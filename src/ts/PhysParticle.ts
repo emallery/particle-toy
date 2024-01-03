@@ -91,28 +91,4 @@ export class PhysParticle implements Sprite, UsesSettings {
       p.line(0, 0, this.position.x, this.position.y);
     }
   }
-
-  reset(position: p5.Vector, p: p5) {
-    // TODO: This is the reset function specifically for leaves.... make it parameterized?
-
-    this.position.set(position);
-    this.velocity.set(0, 0);
-    this.acceleration.set(0, 0);
-
-    const v = 1 / p.frameRate(); // factor for velocity
-    const a = (v * v);         // factor for acceleration
-
-    this.position.x += (Math.random() * 40) - 20;
-    this.position.y += (Math.random() * 250) - 200;
-
-    this.velocity.x = (-200 + (Math.random() * 150)) * v;
-    this.velocity.y = ((Math.random() * 50) - 25) * v;
-
-    this.damping = 1 - (Math.random() * 30) * a; //(Math.random() * 20) * a;
-
-    this.acceleration.y += 30 * a; // gravity
-
-    this.angle = 0;
-    this.angularVelocity = ((Math.random() * 0.02) - 0.01) * 60 * v;
-  }
 }

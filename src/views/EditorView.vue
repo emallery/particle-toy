@@ -7,54 +7,28 @@
   </div>
 </template>
   
-<script lang="ts">
-import { defineComponent, ref, watch } from 'vue';
+<script setup lang="ts">
+import { ref, watch } from 'vue';
 import HelloWorld from '@/components/HelloWorld.vue'; // @ is an alias to /src
 import P5Component from '@/components/P5Component.vue';
 import { Settings } from '@/ts/PhysParticle';
 import { ParticleSpawner } from '@/ts/ParticleSpawner';
 import p5 from 'p5';
+import { getLeaves, respawnLeaf } from '@/ts/Leaves';
 
-export default defineComponent({
-  name: 'EditorView',
-  components: {
-    HelloWorld,
-    P5Component,
-  },
-  setup() {
-    const debugBox = ref(false);
+const debugBox = ref(false);
 
-    let settings = new Settings(debugBox.value, 512, 512);
+let settings = new Settings(debugBox.value, 512, 512);
 
-    watch(debugBox, newValue => {
-      settings.debug = newValue;
-    });
-
-    let leaf: p5.Image = undefined as unknown as p5.Image;
-    let maple: p5.Image = undefined as unknown as p5.Image;
-
-    const dummyP5 = new p5((s: p5) => {
-      s.preload = () => {
-        // eslint-disable-next-line
-        maple = s.loadImage(require("@/assets/maple.png"));
-        // eslint-disable-next-line
-        leaf = s.loadImage(require("@/assets/leaf.png"));
-      };
-    });
-
-    dummyP5.preload();
-
-    const newSpawner = new ParticleSpawner(settings, new p5.Vector((settings.canvasX / 2), -(settings.canvasY / 2)), [leaf, maple]);
-
-    const spawners = [newSpawner];
-
-    return {
-      debugBox,
-      spawners
-    };
-  },
-  // URI Hash seems safe (in Chrome) to at least 50 million characters. Warn for IE + Edge at 2,025 (https://stackoverflow.com/questions/16247162/max-size-of-location-hash-in-browser)
+watch(debugBox, newValue => {
+  settings.debug = newValue;
 });
+
+const newSpawner = new ParticleSpawner(settings, new p5.Vector((settings.canvasX / 2), -(settings.canvasY / 2)), getLeaves(settings), respawnLeaf);
+
+const spawners = [newSpawner];
+
+// URI Hash seems safe (in Chrome) to at least 50 million characters. Warn for IE + Edge at 2,025 (https://stackoverflow.com/questions/16247162/max-size-of-location-hash-in-browser)
 </script>
 
 <style>
