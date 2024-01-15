@@ -34,7 +34,7 @@ export function respawnDrop(s: PhysParticle, position: p5.Vector, frameRate: num
 
     const heck = 512;
 
-    s.position.set(20, (-2* heck) + (Math.random() * heck/2));
+    s.position.set(20, (-2 * heck) + (Math.random() * heck / 2));
     s.velocity.set((-80 + (Math.random() * 130)) * v, ((Math.random() * 80) - 60) * v);
     s.acceleration.set(0, 150 * a);
 }

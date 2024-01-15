@@ -1,4 +1,23 @@
 <template>
+  <title>CSS Template</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <header>
+    <div class="flex-container">
+      <label>Your Magic Link:<input readonly :value="magicLink"></label>
+      <button>Copy!</button>
+
+      <label>
+        Preset:
+        <select v-model="selectedPreset">
+          <option>Leaves</option>
+          <option>Drops</option>
+        </select>
+      </label>
+    </div>
+  </header>
+
   <div class="home">
     <h1>Pretend this is the editor.</h1>
     <P5Component :spawners="spawners" />
@@ -29,6 +48,7 @@ import { getDrops, respawnDrop } from '@/ts/Drops';
 
 const debugBox = ref(false);
 const selectedPreset = defineModel({ default: "Leaves" });
+const magicLink = ref(`${window.location.origin}/view#leaves`)
 
 let settings = new Settings(debugBox.value, 512, 512);
 const spawners = new Array<ParticleSpawner>();
@@ -54,6 +74,11 @@ watch(selectedPreset, newValue => {
 </script>
 
 <style>
+.flex-container {
+  display: flex;
+  background-color: darkgreen;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

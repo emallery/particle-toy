@@ -25,3 +25,4 @@ else if (window.location.hash === "#drops") {
   spawners.push(new ParticleSpawner(settings, new p5.Vector((settings.canvasX / 2), -(settings.canvasY / 2)), getDrops(settings), respawnDrop));
 }
 </script>
+  
