@@ -8,10 +8,8 @@ export function getLeaves(settings: Settings): Array<PhysParticle> {
     // TODO: Find a way to load P5 images without an instnce, or rewrite P5Component to use a paramaterized instance
     const dummyP5 = new p5((s: p5) => {
         s.preload = () => {
-            // eslint-disable-next-line
-            maple = s.loadImage(require("@/assets/maple.png"));
-            // eslint-disable-next-line
-            leaf = s.loadImage(require("@/assets/leaf.png"));
+            maple = s.loadImage(new URL("@/assets/maple.png", import.meta.url).href);
+            leaf = s.loadImage(new URL("@/assets/leaf.png", import.meta.url).href);
         };
     });
     dummyP5.preload();

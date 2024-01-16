@@ -1,5 +1,5 @@
 import p5 from "p5";
-import { PhysParticle, Settings, UsesSettings } from "./PhysParticle";
+import type { PhysParticle, Settings, UsesSettings } from "./PhysParticle";
 
 export class ParticleSpawner implements UsesSettings {
     readonly settings: Settings;

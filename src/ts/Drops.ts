@@ -7,8 +7,7 @@ export function getDrops(settings: Settings): Array<PhysParticle> {
     // TODO: Find a way to load P5 images without an instnce, or rewrite P5Component to use a paramaterized instance
     const dummyP5 = new p5((s: p5) => {
         s.preload = () => {
-            // eslint-disable-next-line
-            drop = s.loadImage(require("@/assets/drop.png"));
+            drop = s.loadImage(new URL("@/assets/drop.png", import.meta.url).href);
         };
     });
     dummyP5.preload();
@@ -34,7 +33,7 @@ export function respawnDrop(s: PhysParticle, position: p5.Vector, frameRate: num
 
     const heck = 512;
 
-    s.position.set(20, (-2* heck) + (Math.random() * heck/2));
+    s.position.set(20, (-2 * heck) + (Math.random() * heck / 2));
     s.velocity.set((-80 + (Math.random() * 130)) * v, ((Math.random() * 80) - 60) * v);
     s.acceleration.set(0, 150 * a);
 }
