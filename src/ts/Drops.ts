@@ -7,8 +7,7 @@ export function getDrops(settings: Settings): Array<PhysParticle> {
     // TODO: Find a way to load P5 images without an instnce, or rewrite P5Component to use a paramaterized instance
     const dummyP5 = new p5((s: p5) => {
         s.preload = () => {
-            // eslint-disable-next-line
-            drop = s.loadImage(require("@/assets/drop.png"));
+            drop = s.loadImage(new URL("@/assets/drop.png", import.meta.url).href);
         };
     });
     dummyP5.preload();

@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { PropType, defineProps, onMounted } from 'vue';
+import { type PropType, defineProps, onMounted } from 'vue';
 import p5 from 'p5';
 import { ParticleSpawner } from '@/ts/ParticleSpawner';
 
@@ -22,9 +22,7 @@ onMounted(() => {
     let myFont: p5.Font;
 
     s.preload = () => {
-      // https://www.google.com/search?q=vue+router+return+file+in+assets+folder
-      // eslint-disable-next-line
-      myFont = s.loadFont(require("@/assets/JetBrainsMono-Regular.ttf"));
+      myFont = s.loadFont(new URL("@/assets/JetBrainsMono-Regular.ttf", import.meta.url).href);
     };
 
     s.setup = () => {
