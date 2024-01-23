@@ -36,7 +36,7 @@
   --section-gap: 160px;
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --color-background: var(--vt-c-black);
     --color-background-soft: var(--vt-c-black-soft);
@@ -48,7 +48,7 @@
     --color-heading: var(--vt-c-text-dark-1);
     --color-text: var(--vt-c-text-dark-2);
   }
-}
+} */
 
 *,
 *::before,
@@ -56,6 +56,11 @@
   box-sizing: border-box;
   margin: 0;
   font-weight: normal;
+}
+
+@font-face {
+  font-family: JetBrainsMono;
+  src: url('@/assets/JetBrainsMono-Regular.ttf');
 }
 
 body {
@@ -67,6 +72,7 @@ body {
     background-color 0.5s;
   line-height: 1.6;
   font-family:
+    JetBrainsMono,
     Inter,
     -apple-system,
     BlinkMacSystemFont,

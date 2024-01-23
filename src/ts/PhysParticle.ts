@@ -1,24 +1,9 @@
 import p5 from 'p5';
+import type { Settings, UsesSettings } from './Settings';
 
 export interface Sprite {
   update(): void;
   draw(p5Instance: p5): void;
-}
-
-export interface UsesSettings {
-  readonly settings: Settings;
-}
-
-export class Settings {
-  debug = false;
-  canvasX = 512;
-  canvasY = 512;
-
-  constructor(debug: boolean, canvasX: number, canvasY: number) {
-    this.debug = debug;
-    this.canvasX = canvasX;
-    this.canvasY = canvasY;
-  }
 }
 
 export class PhysParticle implements Sprite, UsesSettings {
@@ -67,7 +52,7 @@ export class PhysParticle implements Sprite, UsesSettings {
 
     // calculate alpha
     const distance = Math.pow(p.sq(this.position.x) + p.sq(this.position.y), 1 / 2);
-    const distanceMapped = distance / (this.settings.canvasX / 2) * 1.5; // Map [-1.5, 1.5] to the edges of the canvas
+    const distanceMapped = distance / (this.settings.windowSettings.width / 2) * 1.5; // Map [-1.5, 1.5] to the edges of the canvas
     const alphaValue = 255 / (1 + Math.pow(distanceMapped, 8)); // https://www.desmos.com/calculator/nh9k6jruzc
 
     p.tint(this.tint[0], this.tint[1], this.tint[2], alphaValue);

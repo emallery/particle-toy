@@ -1,4 +1,5 @@
-import { PhysParticle, Settings } from "./PhysParticle";
+import { PhysParticle } from "./PhysParticle";
+import type { Settings } from "./Settings";
 import p5 from 'p5';
 
 export function getDrops(settings: Settings): Array<PhysParticle> {
@@ -11,6 +12,7 @@ export function getDrops(settings: Settings): Array<PhysParticle> {
         };
     });
     dummyP5.preload();
+    dummyP5.remove();
 
     const particles = new Array<PhysParticle>();
 

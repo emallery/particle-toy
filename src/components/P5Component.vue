@@ -3,22 +3,47 @@
 </template>
 
 <script setup lang="ts">
-import { type PropType, defineProps, onMounted } from 'vue';
+import { type PropType, onMounted, watch } from 'vue';
 import p5 from 'p5';
 import { ParticleSpawner } from '@/ts/ParticleSpawner';
+import { Settings } from '@/ts/Settings';
 
 const props = defineProps({
   // TODO: Update to Drawables
   spawners: Array as PropType<Array<ParticleSpawner>>,
   // TODO: Use parameterized instance?
   p5Sketch: Function as PropType<(s: p5) => void>,
+  settings: {
+    type: Settings,
+    required: true,
+  },
+});
+
+let p: p5;
+
+watch(props.settings.windowSettings, newSettings => {
+  if (p) {
+    if (newSettings.width == 0 || newSettings.height == 0) {
+      // resize to parent size
+      // this is janky and needs work
+      let canvasDiv = document.getElementById("sketch-holder") as HTMLElement;
+      let w = canvasDiv.offsetWidth;
+      let h = canvasDiv.offsetHeight;
+      p.resizeCanvas(w ? w : 100, h ? h : 100);
+      props.settings.windowSettings.width = w;
+      props.settings.windowSettings.height = w;
+    }
+    else {
+      p.resizeCanvas(newSettings.width, newSettings.height);
+    }
+  }
 });
 
 onMounted(() => {
   const holder = document.getElementById("sketch-holder");
 
-  new p5((s: p5) => {
-    
+  p = new p5((s: p5) => {
+
     let myFont: p5.Font;
 
     s.preload = () => {
@@ -26,7 +51,7 @@ onMounted(() => {
     };
 
     s.setup = () => {
-      s.createCanvas(props.spawners?.[0]?.settings.canvasX as number, props.spawners?.[0]?.settings.canvasY as number, s.WEBGL);
+      s.createCanvas(props.spawners?.[0]?.settings.windowSettings.width as number, props.spawners?.[0]?.settings.windowSettings.height as number, s.WEBGL);
       s.setAttributes('perPixelLighting', false); // fix issues with tint() on WEBGL canvas
       s.frameRate(60);
       s.textFont(myFont);
