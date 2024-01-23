@@ -108,9 +108,9 @@ function applyButton() {
 }
 
 try {
-  let aaa = window.location.hash.substring(1);
-  aaa = decodeURIComponent(aaa);
-  applyFromString(settings, aaa);
+  let settingsData = window.location.hash.substring(1);
+  settingsData = decodeURIComponent(settingsData);
+  applyFromString(settings, settingsData);
 }
 catch (err) {
   // console.log(err);
