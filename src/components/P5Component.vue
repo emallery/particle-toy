@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { type PropType, onMounted, watch } from 'vue';
+import { type PropType, onMounted, watch, isReactive } from 'vue';
 import p5 from 'p5';
 import { ParticleSpawner } from '@/ts/ParticleSpawner';
 import { Settings } from '@/ts/Settings';
@@ -21,23 +21,25 @@ const props = defineProps({
 
 let p: p5;
 
-watch(props.settings.windowSettings, newSettings => {
-  if (p) {
-    if (newSettings.width == 0 || newSettings.height == 0) {
-      // resize to parent size
-      // this is janky and needs work
-      let canvasDiv = document.getElementById("sketch-holder") as HTMLElement;
-      let w = canvasDiv.offsetWidth;
-      let h = canvasDiv.offsetHeight;
-      p.resizeCanvas(w ? w : 100, h ? h : 100);
-      props.settings.windowSettings.width = w;
-      props.settings.windowSettings.height = w;
+if (isReactive(props.settings.windowSettings)) {
+  watch(props.settings.windowSettings, newSettings => {
+    if (p) {
+      if (newSettings.width == 0 || newSettings.height == 0) {
+        // resize to parent size
+        // this is janky and needs work
+        let canvasDiv = document.getElementById("sketch-holder") as HTMLElement;
+        let w = canvasDiv.offsetWidth;
+        let h = canvasDiv.offsetHeight;
+        p.resizeCanvas(w ? w : 100, h ? h : 100);
+        props.settings.windowSettings.width = w;
+        props.settings.windowSettings.height = w;
+      }
+      else {
+        p.resizeCanvas(newSettings.width, newSettings.height);
+      }
     }
-    else {
-      p.resizeCanvas(newSettings.width, newSettings.height);
-    }
-  }
-});
+  });
+}
 
 onMounted(() => {
   const holder = document.getElementById("sketch-holder");

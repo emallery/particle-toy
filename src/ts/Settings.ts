@@ -3,7 +3,7 @@ export interface UsesSettings {
 }
 
 export class Settings {
-  apiVersion = "1.0.0";
+  version = "1.0.0";
   debug = false;
   windowSettings: WindowSettings;
 
