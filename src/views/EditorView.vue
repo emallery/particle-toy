@@ -139,6 +139,11 @@ watch(selectedPreset, newValue => {
 </script>
 
 <style>
+body {
+  /* Use a colored background for the editor */
+  background: var(--color-background);
+}
+
 .app-container {
   /* max-width: 1280px; */
   margin: 0 auto;
