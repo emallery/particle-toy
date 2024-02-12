@@ -10,12 +10,12 @@ import P5Component from '@/components/P5Component.vue';
 import { getDrops, respawnDrop } from '@/ts/Drops';
 import { getLeaves, respawnLeaf } from '@/ts/Leaves';
 import { ParticleSpawner } from '@/ts/ParticleSpawner';
-import { Settings, WindowSettings } from '@/ts/Settings';
+import { Settings, SpawnerSettings, WindowSettings } from '@/ts/Settings';
 import p5 from 'p5';
 import { ref } from 'vue';
 
 const oopsie = ref(false);
-const settings = new Settings(false, new WindowSettings(512, 512));
+const settings = new Settings(false, new WindowSettings(512, 512), new SpawnerSettings());
 
 // URI Hash seems safe (in Chrome) to at least 50 million characters. Warn for IE + Edge at 2,025 (https://stackoverflow.com/questions/16247162/max-size-of-location-hash-in-browser)
 // console.log(`Hash is: ${window.location.hash}`);

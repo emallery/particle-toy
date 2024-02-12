@@ -3,13 +3,15 @@ export interface UsesSettings {
 }
 
 export class Settings {
-  version = "1.0.0";
+  version = "0.0.0";
   debug = false;
   windowSettings: WindowSettings;
+  spawnerSettings: SpawnerSettings;
 
-  constructor(debug: boolean, windowSettings: WindowSettings) {
+  constructor(debug: boolean, windowSettings: WindowSettings, spawnerSettings: SpawnerSettings) {
     this.debug = debug;
     this.windowSettings = windowSettings;
+    this.spawnerSettings = spawnerSettings;
   }
 }
 
@@ -21,6 +23,10 @@ export class WindowSettings {
     this.width = width;
     this.height = height;
   }
+}
+
+export class SpawnerSettings {
+  imagePool: Array<string> = [];
 }
 
 export function toString(settings: Settings) {

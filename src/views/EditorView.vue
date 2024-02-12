@@ -59,11 +59,22 @@
           <div v-if="currentSection === SectionEnum.Window">
             <WindowPanel :settings="settings" />
           </div>
+          <div v-else-if="currentSection === SectionEnum.Image">
+            <ImagePoolPanel :settings="settings" />
+          </div>
           <div v-else>
             <h2>Not implemented!</h2>
           </div>
 
           <P5Component :spawners="spawners" :settings="settings" />
+
+          <div class="bottom-menu">
+            <ul>
+              <li v-for="(deet, name) in settings" :key="name">
+                {{ name }}: {{ deet }}
+              </li>
+            </ul>
+          </div>
 
         </div>
       </div>
@@ -75,7 +86,8 @@
 import { ref, watch, defineModel, reactive } from 'vue';
 import P5Component from '@/components/P5Component.vue'; // @ is an alias to /src
 import WindowPanel from '@/components/WindowPanel.vue';
-import { Settings, WindowSettings, applyFromString, toString } from '@/ts/Settings';
+import ImagePoolPanel from '@/components/ImagePoolPanel.vue';
+import { Settings, SpawnerSettings, WindowSettings, applyFromString, toString } from '@/ts/Settings';
 import { ParticleSpawner } from '@/ts/ParticleSpawner';
 import p5 from 'p5';
 import { getLeaves, respawnLeaf } from '@/ts/Leaves';
@@ -99,7 +111,7 @@ function changeSection(section: SectionEnum): void {
   currentSection.value = section;
 }
 
-const settings = reactive(new Settings(false, new WindowSettings(512, 512)));
+const settings = reactive(new Settings(false, new WindowSettings(512, 512), new SpawnerSettings()));
 const spawners = new Array<ParticleSpawner>();
 
 function applyButton() {
@@ -233,5 +245,17 @@ div.p5Canvas canvas {
   .sidebar li:hover {
     background-color: #e6e6e6;
   }
+}
+
+.bottom-menu {
+  max-width: 75vw;
+}
+
+.bottom-menu li {
+  white-space: nowrap;
+  overflow: hidden;
+  list-style-position: inside;
+  text-overflow: ellipsis;
+  text-align: left;
 }
 </style>
