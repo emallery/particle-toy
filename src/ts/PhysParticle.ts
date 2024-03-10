@@ -16,7 +16,7 @@ export class PhysParticle implements Sprite, UsesSettings {
   damping: number;
   scale: number;
   tint: number[];
-  readonly image: p5.Image;
+  image: p5.Image;
   readonly settings: Settings;
 
   constructor(position: p5.Vector, velocity: p5.Vector, acceleration: p5.Vector, angle: number, va: number, aa: number, damping: number, scale: number, tint: number[], image: p5.Image, settings: Settings) {

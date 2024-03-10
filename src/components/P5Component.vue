@@ -41,6 +41,19 @@ if (isReactive(props.settings.windowSettings)) {
   });
 }
 
+if (isReactive(props.settings.spawnerSettings)) {
+  watch(props.settings.spawnerSettings.imagePool, newPool => {
+    if (props.spawners?.[0]) {
+      // FIXME: Use callbacks
+      let newImages = newPool.map(s => p.loadImage(s));
+
+      for (let particle of props.spawners[0].particles) {
+        particle.image = p.random(newImages);
+      }
+    }
+  });
+}
+
 onMounted(() => {
   const holder = document.getElementById("sketch-holder");
 
