@@ -17,6 +17,11 @@ const router = createRouter({
       component: () => import('../views/DisplayView.vue')
     },
     {
+      path: '/irc',
+      name: 'irc',
+      component: () => import('../views/IRCView.vue')
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: '404',
       component: () => import('../views/NotFoundPage.vue')
