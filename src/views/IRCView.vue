@@ -24,7 +24,7 @@ watch(channel, (newChannel, oldChannel) => {
 
     clearTimeout(channelChangeTimer);
     channelChangeTimer = setTimeout(() => {
-        console.log("Changed")
+        console.log(`Disconnecting from [${oldChannel}, connecting to [${newChannel}]...`);
         emoteList.value.length = 0;
         websocketClient.send(`PART #${oldChannel}`);
         websocketClient.send(`JOIN #${newChannel}`);
@@ -43,23 +43,34 @@ websocketClient.addEventListener('open', () => {
     websocketClient.send(`JOIN #${channel.value}`);
 });
 
+websocketClient.addEventListener('close', event => {
+    console.log(`Connection closed with code [${event.code}]: ${event.reason}`);
+});
+
 websocketClient.addEventListener('message', (data) => {
     console.log(data.data);
 
     let msg = data.data as string;
 
-    // Get messages
+    // Handle chat messages
     if (msg.includes("PRIVMSG")) {
 
         // Parse emotes from chat message
         for (let entry of msg.matchAll(/emotes=(.*?);/g)) {
             if (entry[1]) {                
                 let emoteId = entry[1].split(":")[0];
-                let emoteUrl = `https://static-cdn.jtvnw.net/emoticons/v2/${emoteId}/static/light/3.0`;
+                let emoteUrl = `https://static-cdn.jtvnw.net/emoticons/v2/${emoteId}/default/light/3.0`;
                 emoteList.value.push(emoteUrl);
             }
             
         }
+    }
+
+    // Check for PING message
+    for (let entry of msg.matchAll(/PING :(.*)/g)) {
+        const response = `PONG :${entry[1]}`;
+        console.log(`Got PING message, sending "${response}"`);
+        websocketClient.send(response);
     }
 });
 
