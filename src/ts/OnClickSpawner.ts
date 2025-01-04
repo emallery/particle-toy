@@ -40,15 +40,17 @@ export class OnClickSpawner implements Drawable, UsesSettings {
   draw(p: p5, deltaTime: number): void {
     this.particles.forEach(particle => particle.draw(p));
 
-    // Draw circle at mouse cursor
-    p.push();
-    p.ellipseMode(p.CENTER);
-    p.translate(p.mouseX, p.mouseY);
-    p.stroke('red');
-    p.fill(0, 0, 0, 0);
-    p.strokeWeight(2);
-    p.circle(p.width / -2, p.height / -2, 10);
-    p.pop();
+    if (this.settings.debug) {
+      // Draw circle at mouse cursor
+      p.push();
+      p.ellipseMode(p.CENTER);
+      p.translate(p.mouseX, p.mouseY);
+      p.stroke('red');
+      p.fill(0, 0, 0, 0);
+      p.strokeWeight(2);
+      p.circle(p.width / -2, p.height / -2, 10);
+      p.pop();
+    }
   }
   settings: Settings;
 
