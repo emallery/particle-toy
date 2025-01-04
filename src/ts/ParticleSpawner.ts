@@ -1,8 +1,9 @@
 import p5 from "p5";
 import type { PhysParticle } from "./PhysParticle";
 import type { Settings, UsesSettings } from "./Settings";
+import type { Drawable } from "./Drawable";
 
-export class ParticleSpawner implements UsesSettings {
+export class ParticleSpawner implements UsesSettings, Drawable {
     readonly settings: Settings;
     readonly position: p5.Vector;
 
@@ -16,7 +17,7 @@ export class ParticleSpawner implements UsesSettings {
         this.respawn = respawn;
     }
 
-    update(p: p5) {
+    update(p: p5, deltaTime: number) {
         const frameRate = p.frameRate();
 
         for (const particle of this.particles) {
@@ -28,7 +29,7 @@ export class ParticleSpawner implements UsesSettings {
         }
     }
 
-    draw(p: p5) {
+    draw(p: p5, deltaTime: number) {
         p.angleMode(p.RADIANS);
         this.particles.forEach(particle => particle.draw(p));
     }

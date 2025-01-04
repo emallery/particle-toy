@@ -5,12 +5,13 @@
 <script setup lang="ts">
 import { type PropType, onMounted, watch, isReactive } from 'vue';
 import p5 from 'p5';
+import { Settings, type UsesSettings } from '@/ts/Settings';
+import type { Drawable } from '@/ts/Drawable';
 import { ParticleSpawner } from '@/ts/ParticleSpawner';
-import { Settings } from '@/ts/Settings';
+import { OnClickSpawner } from '@/ts/OnClickSpawner';
 
 const props = defineProps({
-  // TODO: Update to Drawables
-  spawners: Array as PropType<Array<ParticleSpawner>>,
+  spawners: Array as PropType<Array<Drawable & UsesSettings>>,
   // TODO: Use parameterized instance?
   p5Sketch: Function as PropType<(s: p5) => void>,
   settings: {
@@ -43,7 +44,7 @@ if (isReactive(props.settings.windowSettings)) {
 
 if (isReactive(props.settings.spawnerSettings)) {
   watch(props.settings.spawnerSettings.imagePool, newPool => {
-    if (props.spawners?.[0]) {
+    if (props.spawners?.[0] && props.spawners?.[0] instanceof ParticleSpawner) {
       // FIXME: Use callbacks
       let newImages = newPool.map(s => p.loadImage(s));
 
@@ -80,8 +81,8 @@ onMounted(() => {
       s.clear(0, 0, 0, 0);
 
       props.spawners?.forEach(spawner => {
-        spawner.update(s);
-        spawner.draw(s);
+        spawner.update(s, 0);
+        spawner.draw(s, 0);
       });
 
       frameRateBuffer.unshift(s.frameRate());
@@ -93,13 +94,23 @@ onMounted(() => {
           displayFrameRate = frameRateBuffer.reduce((a, b) => a + b) / frameRateBuffer.length;
         }
 
+        // Write FPS
         s.textSize(10);
         s.fill(0);
         s.stroke(255);
         s.strokeWeight(2);
-        s.text(`FPS: ${displayFrameRate.toFixed(3)}`, -240, -240);
+        s.textAlign(s.LEFT, s.TOP);
+        s.text(`FPS: ${displayFrameRate.toFixed(3)}`, s.width / -2 + 6, s.height / -2 + 6);
+
+        // Write mouse position
+        s.textAlign(s.RIGHT, s.TOP);
+        s.text(`mouseX: ${s.mouseX}\nmouseY: ${s.mouseY}`, s.width / 2 - 6, s.height / -2 + 6);
       }
     };
   }, holder as HTMLElement);
+
+  // Add an extra spawner that follows the mouse cursor
+  const onClickSpawner = new OnClickSpawner(props.settings);
+  props.spawners?.push(onClickSpawner);
 });
 </script>
