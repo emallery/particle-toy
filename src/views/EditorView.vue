@@ -14,7 +14,7 @@
         <label>
           Preset:
           <select v-model="selectedPreset">
-            <option v-for="elem of Object.values(Preset)">{{ elem }}</option>
+            <option v-for="elem of Object.values(Preset)" :key="elem">{{ elem }}</option>
           </select>
         </label>
       </div>
@@ -41,7 +41,7 @@
             <label>
               Preset:
               <select v-model="selectedPreset">
-                <option v-for="elem of Object.values(Preset)">{{ elem }}</option>
+                <option v-for="elem of Object.values(Preset)" :key="elem">{{ elem }}</option>
               </select>
             </label>
             <br>

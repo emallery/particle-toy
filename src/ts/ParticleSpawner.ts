@@ -25,12 +25,12 @@ export class ParticleSpawner implements UsesSettings, Drawable {
                 this.respawn(particle, this.position, frameRate);
             }
 
-            particle.update();
+            particle.update(p, deltaTime);
         }
     }
 
     draw(p: p5, deltaTime: number) {
         p.angleMode(p.RADIANS);
-        this.particles.forEach(particle => particle.draw(p));
+        this.particles.forEach(particle => particle.draw(p, deltaTime));
     }
 }

@@ -33,12 +33,11 @@ export class OnClickSpawner implements Drawable, UsesSettings {
     }
 
     this.mousePrev = p.mouseIsPressed;
-    this.particles.forEach(particle => particle.update());
-    
+    this.particles.forEach(particle => particle.update(p, deltaTime));
   }
 
   draw(p: p5, deltaTime: number): void {
-    this.particles.forEach(particle => particle.draw(p));
+    this.particles.forEach(particle => particle.draw(p, deltaTime));
 
     if (this.settings.debug) {
       // Draw circle at mouse cursor
