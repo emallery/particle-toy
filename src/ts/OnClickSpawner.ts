@@ -11,7 +11,7 @@ export class OnClickSpawner implements Drawable, UsesSettings {
     "https://static-cdn.jtvnw.net/emoticons/v2/emotesv2_9e1108c7a86643e581e658bb1edc6263/default/light/2.0",
   ];
   private mousePrev: boolean = false;
-
+  settings: Settings;
   private readonly imageMap: Map<string, p5.Image> = new Map();
 
   update(p: p5, deltaTime: number): void {
@@ -52,7 +52,6 @@ export class OnClickSpawner implements Drawable, UsesSettings {
       p.pop();
     }
   }
-  settings: Settings;
 
   constructor(settings: Settings) {
     this.settings = settings;

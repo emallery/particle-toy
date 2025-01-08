@@ -37,7 +37,7 @@
         <div class="main-content">
 
           <div>
-            <h1>Pretend this is the editor.</h1>
+            <h1>Particle Toy!{{ version ? ` (v${version})` : '' }}</h1>
 
             <label>
               Preset:
@@ -102,6 +102,7 @@ enum SectionEnum {
   Help = "Help!",
 }
 
+const version = import.meta.env.VITE_APP_VERSION;
 const selectedPreset = defineModel({ default: "Leaves" });
 const magicLink = ref(`${window.location.origin}/view#leaves`)
 

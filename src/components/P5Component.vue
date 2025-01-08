@@ -1,14 +1,29 @@
 <template>
+  <header>Emotes for: <input type="text" v-model="channel"/></header>
   <div id="sketch-holder" class="p5Canvas" />
 </template>
 
 <script setup lang="ts">
-import { type PropType, onMounted, watch, isReactive } from 'vue';
+import { type PropType, onMounted, watch, isReactive, ref } from 'vue';
 import p5 from 'p5';
 import { Settings, type UsesSettings } from '@/ts/Settings';
 import type { Drawable } from '@/ts/Drawable';
 import { ParticleSpawner } from '@/ts/ParticleSpawner';
 import { OnClickSpawner } from '@/ts/OnClickSpawner';
+import { TwitchGenerator } from '@/ts/TwitchGenerator';
+
+// TODO: Refactor this, big time.
+const channel = ref("gamesdonequick");
+const channelChanger: {timerId: number | undefined, prevChannel: string} = {timerId: undefined, prevChannel: channel.value};
+watch(channel, (newChannel) => {
+  // Prevent spamming join/leave requests by only changing channel if text isn't updated for a long enough duration.
+  clearTimeout(channelChanger.timerId);
+  channelChanger.timerId = setTimeout(() => {
+        console.log(`Disconnecting from [${channelChanger.prevChannel}, connecting to [${newChannel}]...`);
+        channelChanger.prevChannel = newChannel;
+        twitch.setChannel(newChannel);
+    }, 1000);
+});
 
 const props = defineProps({
   spawners: Array as PropType<Array<Drawable & UsesSettings>>,
@@ -54,6 +69,14 @@ if (isReactive(props.settings.spawnerSettings)) {
     }
   });
 }
+
+// Add an extra spawner that follows the mouse cursor
+const onClickSpawner = new OnClickSpawner(props.settings);
+props.spawners?.push(onClickSpawner);
+
+// Add a Twitch generator for kicks
+const twitch = new TwitchGenerator(props.settings, "gamesdonequick");
+props.spawners?.push(twitch);
 
 onMounted(() => {
   const holder = document.getElementById("sketch-holder");
@@ -107,10 +130,6 @@ onMounted(() => {
         s.text(`mouseX: ${s.mouseX}\nmouseY: ${s.mouseY}`, s.width / 2 - 6, s.height / -2 + 6);
       }
     };
-  }, holder as HTMLElement);
-
-  // Add an extra spawner that follows the mouse cursor
-  const onClickSpawner = new OnClickSpawner(props.settings);
-  props.spawners?.push(onClickSpawner);
+  }, holder as HTMLElement);  
 });
 </script>
