@@ -14,8 +14,7 @@
         <label>
           Preset:
           <select v-model="selectedPreset">
-            <option>Leaves</option>
-            <option>Drops</option>
+            <option v-for="elem of Object.values(Preset)">{{ elem }}</option>
           </select>
         </label>
       </div>
@@ -42,8 +41,7 @@
             <label>
               Preset:
               <select v-model="selectedPreset">
-                <option>Leaves</option>
-                <option>Drops</option>
+                <option v-for="elem of Object.values(Preset)">{{ elem }}</option>
               </select>
             </label>
             <br>
@@ -66,6 +64,11 @@
             <h2>Not implemented!</h2>
           </div>
 
+          <!-- Twitch settings -->
+          <div v-if="selectedPreset === Preset.Twitch" >
+            <header>Emotes for: <input type="text" v-model="channel"/></header>
+          </div>
+
           <P5Component :spawners="spawners" :settings="settings" />
 
           <div class="bottom-menu">
@@ -81,9 +84,9 @@
     </div>
   </div>
 </template>
-  
+
 <script setup lang="ts">
-import { ref, watch, defineModel, reactive } from 'vue';
+import { ref, watch, defineModel, reactive, onMounted, watchEffect } from 'vue';
 import P5Component from '@/components/P5Component.vue'; // @ is an alias to /src
 import WindowPanel from '@/components/WindowPanel.vue';
 import ImagePoolPanel from '@/components/ImagePoolPanel.vue';
@@ -92,6 +95,9 @@ import { ParticleSpawner } from '@/ts/ParticleSpawner';
 import p5 from 'p5';
 import { getLeaves, respawnLeaf } from '@/ts/Leaves';
 import { getDrops, respawnDrop } from '@/ts/Drops';
+import { OnClickSpawner } from '@/ts/OnClickSpawner';
+import { TwitchGenerator } from '@/ts/TwitchGenerator';
+import type { Drawable } from '@/ts/Drawable';
 
 enum SectionEnum {
   Window = "Window Settings",
@@ -102,8 +108,15 @@ enum SectionEnum {
   Help = "Help!",
 }
 
+enum Preset {
+  Leaves = "Leaves",
+  Drops = "Drops",
+  OnClick = "On-Click",
+  Twitch = "Twitch Emotes",
+}
+
 const version = import.meta.env.VITE_APP_VERSION;
-const selectedPreset = defineModel({ default: "Leaves" });
+const selectedPreset = defineModel<Preset>({ default: Preset.Twitch });
 const magicLink = ref(`${window.location.origin}/view#leaves`)
 
 const currentSection = ref(SectionEnum.Window);
@@ -113,7 +126,7 @@ function changeSection(section: SectionEnum): void {
 }
 
 const settings = reactive(new Settings(false, new WindowSettings(512, 512), new SpawnerSettings()));
-const spawners = new Array<ParticleSpawner>();
+const spawners = new Array<Drawable>();
 
 function applyButton() {
   window.location.hash = magicLink.value;
@@ -134,19 +147,49 @@ function reset() {
   window.location.reload();
 }
 
-// Gaurantee that a spawner always exists
-spawners[0] = new ParticleSpawner(settings, new p5.Vector((settings.windowSettings.width / 2), -(settings.windowSettings.height / 2)), getLeaves(settings), respawnLeaf);
+// Re-use a single TwitchGenerator so we aren't making and closing tons of connections to Twitch
+const channel = ref("gamesdonequick");
+const twitch = new TwitchGenerator(settings, channel.value);
 
+// Twitch-related settings options
+const channelChanger: {timerId: number | undefined, prevChannel: string} = {timerId: undefined, prevChannel: channel.value};
+watch(channel, (newChannel) => {
+  // Prevent spamming join/leave requests by only changing channel if text isn't updated for a long enough duration.
+  clearTimeout(channelChanger.timerId);
+  channelChanger.timerId = setTimeout(() => {
+        console.log(`Disconnecting from [${channelChanger.prevChannel}, connecting to [${newChannel}]...`);
+        channelChanger.prevChannel = newChannel;
+        twitch.setChannel(newChannel);
+    }, 1000);
+});
 
-watch(selectedPreset, newValue => {
-  // FIXME: Use an enum for the v-model and this
-  if (newValue === "Leaves") {
-    const newSpawner = new ParticleSpawner(settings, new p5.Vector((settings.windowSettings.width / 2), -(settings.windowSettings.height / 2)), getLeaves(settings), respawnLeaf);
-    spawners[0] = newSpawner;
-  }
-  else if (newValue === "Drops") {
-    const newSpawner = new ParticleSpawner(settings, new p5.Vector((settings.windowSettings.width / 2), -(settings.windowSettings.height / 2)), getDrops(settings), respawnDrop);
-    spawners[0] = newSpawner;
+// Handle changing the selected preset by loadig the appropriate particle systems.
+// Use a watchEffect() instead of a watch() because it uses `immediate` mode by default.
+watchEffect(() => {
+  switch (selectedPreset.value) {
+    case Preset.Leaves: {
+      const newSpawner = new ParticleSpawner(settings, new p5.Vector((settings.windowSettings.width / 2), -(settings.windowSettings.height / 2)), getLeaves(settings), respawnLeaf);
+      spawners[0] = newSpawner;
+      break;
+    }
+    case Preset.Drops: {
+      const newSpawner = new ParticleSpawner(settings, new p5.Vector((settings.windowSettings.width / 2), -(settings.windowSettings.height / 2)), getDrops(settings), respawnDrop);
+      spawners[0] = newSpawner;
+      break;
+    }
+    case Preset.OnClick: {
+      // Add a spawner that follows the mouse cursor
+      const onClickSpawner = new OnClickSpawner(settings);
+      spawners[0] = onClickSpawner;
+      break;
+    }
+    case Preset.Twitch: {
+      spawners[0] = twitch;
+      break;
+    }
+    default: {
+      console.error(`Unhandled preset: ${selectedPreset.value}`);
+    }
   }
 });
 </script>

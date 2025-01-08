@@ -1,32 +1,16 @@
 <template>
-  <header>Emotes for: <input type="text" v-model="channel"/></header>
   <div id="sketch-holder" class="p5Canvas" />
 </template>
 
 <script setup lang="ts">
-import { type PropType, onMounted, watch, isReactive, ref } from 'vue';
+import { type PropType, onMounted, watch, isReactive } from 'vue';
 import p5 from 'p5';
-import { Settings, type UsesSettings } from '@/ts/Settings';
+import { Settings } from '@/ts/Settings';
 import type { Drawable } from '@/ts/Drawable';
 import { ParticleSpawner } from '@/ts/ParticleSpawner';
-import { OnClickSpawner } from '@/ts/OnClickSpawner';
-import { TwitchGenerator } from '@/ts/TwitchGenerator';
-
-// TODO: Refactor this, big time.
-const channel = ref("gamesdonequick");
-const channelChanger: {timerId: number | undefined, prevChannel: string} = {timerId: undefined, prevChannel: channel.value};
-watch(channel, (newChannel) => {
-  // Prevent spamming join/leave requests by only changing channel if text isn't updated for a long enough duration.
-  clearTimeout(channelChanger.timerId);
-  channelChanger.timerId = setTimeout(() => {
-        console.log(`Disconnecting from [${channelChanger.prevChannel}, connecting to [${newChannel}]...`);
-        channelChanger.prevChannel = newChannel;
-        twitch.setChannel(newChannel);
-    }, 1000);
-});
 
 const props = defineProps({
-  spawners: Array as PropType<Array<Drawable & UsesSettings>>,
+  spawners: Array as PropType<Array<Drawable>>,
   // TODO: Use parameterized instance?
   p5Sketch: Function as PropType<(s: p5) => void>,
   settings: {
@@ -70,14 +54,7 @@ if (isReactive(props.settings.spawnerSettings)) {
   });
 }
 
-// Add an extra spawner that follows the mouse cursor
-const onClickSpawner = new OnClickSpawner(props.settings);
-props.spawners?.push(onClickSpawner);
-
-// Add a Twitch generator for kicks
-const twitch = new TwitchGenerator(props.settings, "gamesdonequick");
-props.spawners?.push(twitch);
-
+// Initialize the P5 instance in onMounted() because the sketch-holder element might not exist during setup.
 onMounted(() => {
   const holder = document.getElementById("sketch-holder");
 
@@ -90,7 +67,7 @@ onMounted(() => {
     };
 
     s.setup = () => {
-      s.createCanvas(props.spawners?.[0]?.settings.windowSettings.width as number, props.spawners?.[0]?.settings.windowSettings.height as number, s.WEBGL);
+      s.createCanvas(props.settings.windowSettings.width as number, props.settings.windowSettings.height as number, s.WEBGL);
       s.setAttributes('perPixelLighting', false); // fix issues with tint() on WEBGL canvas
       s.frameRate(60);
       s.textFont(myFont);
@@ -102,16 +79,17 @@ onMounted(() => {
 
     s.draw = () => {
       s.clear(0, 0, 0, 0);
+      const frameTime = 1 / s.frameRate();
 
       props.spawners?.forEach(spawner => {
-        spawner.update(s, 0);
-        spawner.draw(s, 0);
+        spawner.update(s, frameTime);
+        spawner.draw(s, frameTime);
       });
 
       frameRateBuffer.unshift(s.frameRate());
       frameRateBuffer.pop();
 
-      if (props.spawners?.[0]?.settings.debug) {
+      if (props.settings.debug) {
         // Only update frame rate to show every couple of frames
         if (s.frameCount % 4 == 0) {
           displayFrameRate = frameRateBuffer.reduce((a, b) => a + b) / frameRateBuffer.length;
@@ -124,6 +102,9 @@ onMounted(() => {
         s.strokeWeight(2);
         s.textAlign(s.LEFT, s.TOP);
         s.text(`FPS: ${displayFrameRate.toFixed(3)}`, s.width / -2 + 6, s.height / -2 + 6);
+
+        // Write Frame Time for current frame
+        s.text(`Frame Time: ${frameTime.toFixed(4)}`, s.width / -2 + 6, s.height / -2 + 18);
 
         // Write mouse position
         s.textAlign(s.RIGHT, s.TOP);

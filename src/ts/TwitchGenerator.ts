@@ -122,7 +122,7 @@ export class TwitchGenerator implements UsesSettings, Drawable {
     
     update(p: p5, deltaTime: number): void {
         this.p5 = p;
-        this.particles.forEach(particle => particle.update());
+        this.particles.forEach(particle => particle.update(p, deltaTime));
     }
 
     draw(p: p5, deltaTime: number): void {
@@ -132,7 +132,7 @@ export class TwitchGenerator implements UsesSettings, Drawable {
             p.text("Connection to Twitch lost.\nPlease refresh the page!", 0, 0);
         }
 
-        this.particles.forEach(particle => particle.draw(p));
+        this.particles.forEach(particle => particle.draw(p, deltaTime));
     }
 
     setChannel(newChannel: string) {

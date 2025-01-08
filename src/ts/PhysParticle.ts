@@ -1,12 +1,8 @@
 import p5 from 'p5';
 import type { Settings, UsesSettings } from './Settings';
+import type { Drawable } from './Drawable';
 
-export interface Sprite {
-  update(): void;
-  draw(p5Instance: p5): void;
-}
-
-export class PhysParticle implements Sprite, UsesSettings {
+export class PhysParticle implements Drawable, UsesSettings {
   position: p5.Vector;
   velocity: p5.Vector;
   acceleration: p5.Vector;
@@ -33,7 +29,7 @@ export class PhysParticle implements Sprite, UsesSettings {
     this.settings = settings;
   }
 
-  update() {
+  update(p: p5, deltaTime: number) {
     this.velocity.add(this.acceleration);
     this.position.add(this.velocity);
 
@@ -45,7 +41,7 @@ export class PhysParticle implements Sprite, UsesSettings {
     this.angle += this.angularVelocity;
   }
 
-  draw(p: p5) {
+  draw(p: p5, deltaTime: number) {
     // Setup for image and rectangle drawing
     p.imageMode(p.CENTER);
     p.rectMode(p.CENTER);
