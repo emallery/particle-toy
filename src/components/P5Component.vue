@@ -1,5 +1,5 @@
 <template>
-  <div id="sketch-holder" class="p5Canvas" />
+  <div id="sketch-holder" class="p5Canvas noselect" />
 </template>
 
 <script setup lang="ts">
@@ -108,9 +108,21 @@ onMounted(() => {
 
         // Write mouse position
         s.textAlign(s.RIGHT, s.TOP);
-        s.text(`mouseX: ${s.mouseX}\nmouseY: ${s.mouseY}`, s.width / 2 - 6, s.height / -2 + 6);
+        s.text(`mouseX: ${s.mouseX.toFixed(3)}\nmouseY: ${s.mouseY.toFixed(3)}\nX: ${(s.mouseX - s.width / 2).toFixed(3)}\nY: ${(s.mouseY - s.height / 2).toFixed(3)}`, s.width / 2 - 6, s.height / -2 + 6);
       }
     };
   }, holder as HTMLElement);  
 });
 </script>
+
+<style>
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+</style>

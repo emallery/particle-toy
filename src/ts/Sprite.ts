@@ -2,6 +2,8 @@ import p5 from "p5";
 import type { Drawable } from "./Drawable";
 import type { Settings, UsesSettings } from "./Settings";
 
+
+
 export class Sprite implements Drawable, UsesSettings {
     position: p5.Vector = new p5.Vector(0, 0);
     scale: number = 1;
