@@ -18,10 +18,12 @@ export class Settings {
 export class WindowSettings {
   width = 512;
   height = 512;
+  frameRate = 60;
 
-  constructor(width: number, height: number) {
+  constructor(width: number, height: number, frameRate: number) {
     this.width = width;
     this.height = height;
+    this.frameRate = frameRate;
   }
 }
 

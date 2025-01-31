@@ -15,7 +15,7 @@ import p5 from 'p5';
 import { ref } from 'vue';
 
 const oopsie = ref(false);
-const settings = new Settings(false, new WindowSettings(512, 512), new SpawnerSettings());
+const settings = new Settings(false, new WindowSettings(512, 512, 60), new SpawnerSettings());
 
 // URI Hash seems safe (in Chrome) to at least 50 million characters. Warn for IE + Edge at 2,025 (https://stackoverflow.com/questions/16247162/max-size-of-location-hash-in-browser)
 // console.log(`Hash is: ${window.location.hash}`);

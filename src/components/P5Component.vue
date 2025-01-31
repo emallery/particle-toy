@@ -52,6 +52,13 @@ if (isReactive(props.settings.spawnerSettings)) {
       }
     }
   });
+
+  // Pass target frame rate updates to P5 component using lambda getter function
+  watch(() => props.settings.windowSettings.frameRate, newFrameRate => {
+    if (p) {
+      p.frameRate(newFrameRate);
+    }
+  });
 }
 
 // Initialize the P5 instance in onMounted() because the sketch-holder element might not exist during setup.

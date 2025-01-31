@@ -86,7 +86,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, defineModel, reactive, onMounted, watchEffect } from 'vue';
+import { ref, watch, defineModel, reactive, watchEffect } from 'vue';
 import P5Component from '@/components/P5Component.vue'; // @ is an alias to /src
 import WindowPanel from '@/components/WindowPanel.vue';
 import ImagePoolPanel from '@/components/ImagePoolPanel.vue';
@@ -127,7 +127,7 @@ function changeSection(section: SectionEnum): void {
   currentSection.value = section;
 }
 
-const settings = reactive(new Settings(false, new WindowSettings(1920 / 3, 1080/3), new SpawnerSettings()));
+const settings = reactive(new Settings(false, new WindowSettings(1920 / 3, 1080/3, 60), new SpawnerSettings()));
 const spawners = new Array<Drawable>();
 
 function applyButton() {

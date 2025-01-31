@@ -5,13 +5,13 @@ import { Sprite } from "./Sprite";
 
 class TimedSprite extends Sprite {
     lifetime = 0.0;
-    isMovingLeft = false;
-    isMovingUp = false;
+    isMovingRight = false;
+    isMovingDown = false;
 }
 
 export class DVDSpawner implements Drawable, UsesSettings {
 
-    private readonly speed = 4.5;
+    private readonly speed = 360;
     private readonly particleLifetime = 5.0; // seconds
     settings: Settings;
     private readonly imageMap: Map<string, p5.Image> = new Map();
@@ -47,8 +47,8 @@ export class DVDSpawner implements Drawable, UsesSettings {
 
             const newSprite = new TimedSprite(this.imageMap.get("leaf") as p5.Image /*not undefined*/, this.settings);
             newSprite.position = new p5.Vector(randX, randY);
-            newSprite.isMovingLeft = p.random([true, false]);
-            newSprite.isMovingUp = p.random([true, false]);
+            newSprite.isMovingRight = p.random([true, false]);
+            newSprite.isMovingDown = p.random([true, false]);
             newSprite.scale = 0.33;
             this.particles.push(newSprite);
         }
@@ -58,19 +58,39 @@ export class DVDSpawner implements Drawable, UsesSettings {
         // Move all the particles
         this.particles.forEach(o => {
             // Horizontal
-            o.position.add(o.isMovingLeft ? this.speed : -1 * this.speed);
+            o.position.add(o.isMovingRight ? this.speed * deltaTime : this.speed * -deltaTime);
             const hOffset = o.image.width * o.scale / 2;
-            if (o.position.x - hOffset < p.width / -2 || o.position.x + hOffset > p.width / 2) {
-                o.isMovingLeft = !o.isMovingLeft;
+            const lOverlap = o.position.x - hOffset + (p.width / 2); // The number of pixels away from the edge of the screen that the left edge of the image is.
+            const rOverlap = o.position.x + hOffset - (p.width / 2); // Pixels the right edge of the image is away from the right edge of the window
+            
+            if (lOverlap < 0) {
+                o.isMovingRight = true;
+                o.position.x -= 2 * lOverlap;
+            }
+            
+            if (rOverlap > 0) {
+                o.isMovingRight = false;
+                o.position.x -= 2 * rOverlap;
             }
 
             // Vertical
-            o.position.add(0, o.isMovingUp ? this.speed : -1 * this.speed);
+            o.position.add(0, o.isMovingDown ? this.speed * deltaTime : this.speed * -deltaTime);
             const vOffset = o.image.height * o.scale / 2;
-            if (o.position.y - vOffset < p.height / -2 || o.position.y + vOffset > p.height / 2) {
-                o.isMovingUp = !o.isMovingUp;
+            const tOverlap = o.position.y - vOffset + (p.height / 2);
+            const bOverlap = o.position.y + vOffset - (p.height / 2);
+
+            if (tOverlap < 0) {
+                o.isMovingDown = true;
+                o.position.y -= 2 * tOverlap;
+            }
+
+            if (bOverlap > 0) {
+                o.isMovingDown = false;
+                o.position.y -= 2 * bOverlap;
             }
         });
+
+        // TODO: Tint based on age (fade darker over time), fade opacity in and out
     }
 
     draw(p: p5, deltaTime: number): void {
