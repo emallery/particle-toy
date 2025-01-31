@@ -4,6 +4,7 @@
         <ul>
             <li><label>Width: <input v-model="settings.windowSettings.width" type="number" min="1" max="3840" step="1"></label></li>
             <li><label>Height: <input v-model="settings.windowSettings.height" type="number" min="1" max="2160" step="1"></label></li>
+            <li><label>Target Frame Rate: <input v-model="settings.windowSettings.frameRate" type="number" min="10" max="120" step="1"></label></li>
         </ul>
     </div>
 </template>

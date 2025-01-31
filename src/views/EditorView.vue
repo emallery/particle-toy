@@ -86,7 +86,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, defineModel, reactive, onMounted, watchEffect } from 'vue';
+import { ref, watch, defineModel, reactive, watchEffect } from 'vue';
 import P5Component from '@/components/P5Component.vue'; // @ is an alias to /src
 import WindowPanel from '@/components/WindowPanel.vue';
 import ImagePoolPanel from '@/components/ImagePoolPanel.vue';
@@ -98,6 +98,7 @@ import { getDrops, respawnDrop } from '@/ts/Drops';
 import { OnClickSpawner } from '@/ts/OnClickSpawner';
 import { TwitchGenerator } from '@/ts/TwitchGenerator';
 import type { Drawable } from '@/ts/Drawable';
+import { DVDSpawner } from '@/ts/DVDSpawner';
 
 enum SectionEnum {
   Window = "Window Settings",
@@ -113,10 +114,11 @@ enum Preset {
   Drops = "Drops",
   OnClick = "On-Click",
   Twitch = "Twitch Emotes",
+  DVD = "DVD",
 }
 
 const version = import.meta.env.VITE_APP_VERSION;
-const selectedPreset = defineModel<Preset>({ default: Preset.Twitch });
+const selectedPreset = defineModel<Preset>({ default: Preset.DVD });
 const magicLink = ref(`${window.location.origin}/view#leaves`)
 
 const currentSection = ref(SectionEnum.Window);
@@ -125,7 +127,7 @@ function changeSection(section: SectionEnum): void {
   currentSection.value = section;
 }
 
-const settings = reactive(new Settings(false, new WindowSettings(512, 512), new SpawnerSettings()));
+const settings = reactive(new Settings(false, new WindowSettings(1920 / 3, 1080/3, 60), new SpawnerSettings()));
 const spawners = new Array<Drawable>();
 
 function applyButton() {
@@ -185,6 +187,10 @@ watchEffect(() => {
     }
     case Preset.Twitch: {
       spawners[0] = twitch;
+      break;
+    }
+    case Preset.DVD: {
+      spawners[0] = new DVDSpawner(settings);
       break;
     }
     default: {
