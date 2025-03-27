@@ -28,7 +28,7 @@ export class Sprite implements Drawable, UsesSettings {
         p.imageMode(p.CENTER);
         p.rectMode(p.CENTER);
 
-        p.tint(this.tint[0], this.tint[1], this.tint[2], 255);
+        p.tint(this.tint[0], this.tint[1], this.tint[2], this.tint[3]);
 
         // Transform the canvas appropriately
         p.push();

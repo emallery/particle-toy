@@ -13,6 +13,7 @@ export class DVDSpawner implements Drawable, UsesSettings {
 
     private readonly speed = 360;
     private readonly particleLifetime = 5.0; // seconds
+    private readonly particleFadeTime = 0.67; // how long particle spends fading out, seconds. Set to 0 to disable fadeout.
     settings: Settings;
     private readonly imageMap: Map<string, p5.Image> = new Map();
     private mousePrev: boolean = false;
@@ -88,9 +89,14 @@ export class DVDSpawner implements Drawable, UsesSettings {
                 o.isMovingDown = false;
                 o.position.y -= 2 * bOverlap;
             }
-        });
 
-        // TODO: Tint based on age (fade darker over time), fade opacity in and out
+            // Tint based on age (fade darker over time), fade opacity in and out
+            const timeLeft = this.particleLifetime - o.lifetime;
+            let opacity = timeLeft / this.particleFadeTime;
+            // Note: To darken while fading out, multiply RGB by (opacity + 0.5) since using opacity directly darkens too much.
+            // console.log(`timeLeft: ${timeLeft}, opacity: ${opacity}`);
+            o.tint = [255, 255, 255, 255 * opacity];
+        });
     }
 
     draw(p: p5, deltaTime: number): void {
