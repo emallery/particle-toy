@@ -2,6 +2,7 @@ import p5 from "p5";
 import type { Drawable } from "./Drawable";
 import type { Settings, UsesSettings } from "./Settings";
 import { PhysParticle } from "./PhysParticle";
+import { PhysicsState } from "./particle/PhysicsState";
 
 export class OnClickSpawner implements Drawable, UsesSettings {
   readonly particles: PhysParticle[] = []; 
@@ -28,7 +29,8 @@ export class OnClickSpawner implements Drawable, UsesSettings {
       const randX = p.random(-6, 6);
       const randY = p.random(-16, -6);
 
-      const newParticle = new PhysParticle(new p5.Vector(p.mouseX - p.width / 2, p.mouseY - p.height / 2), new p5.Vector(randX, randY), new p5.Vector(0, 0.6), 0, randX / 150, 0, 1, 1.5, [255, 255, 255], image, this.settings);
+      const state = new PhysicsState(new p5.Vector(p.mouseX - p.width / 2, p.mouseY - p.height / 2), new p5.Vector(randX, randY), new p5.Vector(0, 0.6), 0, randX / 150, 0, 1);
+      const newParticle = new PhysParticle(state, 1.5, [255, 255, 255], image, this.settings);
       this.particles.push(newParticle);
     }
 

@@ -1,19 +1,19 @@
 import p5 from "p5";
 import type { Drawable } from "./Drawable";
 import type { Settings, UsesSettings } from "./Settings";
-import { PhysParticle } from "./PhysParticle";
+import { FireworkParticle as FireworkParticle } from "./FireworkParticle";
 
-export class TwitchGenerator implements UsesSettings, Drawable {
-    settings: Settings;
-    
+export class TwitchGenerator implements Drawable, UsesSettings {
+    readonly settings: Settings;
+
     // Twitch-related fields
     private channel: string | undefined = undefined;
     private static readonly EVENTSUB_WEBSOCKET_URL = 'wss://irc-ws.chat.twitch.tv:443';
     private readonly websocketClient = new WebSocket(TwitchGenerator.EVENTSUB_WEBSOCKET_URL);
 
     // Particle-related fields
-    readonly particles: PhysParticle[] = [];
-    private readonly imageMap: Map<string, p5.Image> = new Map();
+    private handler: TwitchMessageHandler | undefined;
+    private readonly imageCache: Map<string, p5.Image> = new Map();
     private p5: p5 | undefined = undefined;
 
     constructor(settings: Settings, channel: string | undefined = undefined) {
@@ -36,7 +36,7 @@ export class TwitchGenerator implements UsesSettings, Drawable {
         this.websocketClient.send("PASS gamer");
         this.websocketClient.send(`NICK justinfan${loginId}`);
         this.websocketClient.send("CAP REQ twitch.tv/tags")
-        
+
         if (this.channel) {
             this.setChannel(this.channel);
         }
@@ -49,11 +49,11 @@ export class TwitchGenerator implements UsesSettings, Drawable {
     private handleMessage(message: MessageEvent<string>) {
         // console.log(message.data);
         const msg = message.data as string;
-        
+
         if (typeof message.data !== "string") {
             console.error(`Type of message.data [${typeof message.data}] is not 'string'. Continuing anyway...`);
         }
-        
+
         // Check for PING message
         for (const entry of msg.matchAll(/PING :(.*)/g)) {
             const response = `PONG :${entry[1]}`;
@@ -69,11 +69,21 @@ export class TwitchGenerator implements UsesSettings, Drawable {
             console.log("Emote text: " + emoteText);
             console.log(emoteInfo);
 
+            // Load all images for the given message
+            const emoteImageMap = new Map<p5.Image, number>();
             for (const entry of emoteInfo) {
-                // Spawn the appropriate number of particles for each emote
-                for (let i = 0; i < entry[1]; i++) {
-                    this.spawnEmoteParticle(entry[0]);
+                const image = this.getImageFromCache(entry[0]);
+                if (image) {
+                    emoteImageMap.set(image, entry[1]);
                 }
+            }
+
+            // Pass parsed emote data to the renderer
+            if (!this.handler && this.p5) {
+                this.handler = new TwitchMessageHandler(this.p5, this.settings);
+            }
+            if (this.handler) {
+                this.handler.handleMessage(emoteImageMap);
             }
         }
     }
@@ -94,45 +104,51 @@ export class TwitchGenerator implements UsesSettings, Drawable {
         return result;
     }
 
-    private spawnEmoteParticle(emoteId: string): void {
+    private getImageFromCache(emoteId: string): p5.Image | null {
         const emoteUrl = `https://static-cdn.jtvnw.net/emoticons/v2/${emoteId}/default/light/2.0`;
 
         // Try to get the P5 Image for the given URL. Load it if it's not loaded already.
-        let image = this.imageMap.get(emoteUrl);
+        let image = this.imageCache.get(emoteUrl);
         if (image === undefined) {
             // TODO: Use loadImage callback, and less janky way of referencing p5 instance
             if (this.p5) {
                 image = this.p5.loadImage(emoteUrl, image);
-                this.imageMap.set(emoteUrl, image);
+                this.imageCache.set(emoteUrl, image);
             }
             else {
                 console.error(`P5 instance not initialized, can't load emote: ${emoteId}`);
-                return;
+                return null;
             }
         }
 
-        if (this.p5) {
-            // Create a particle for the emote
-            const randX = this.p5.random(-12, 12);
-            const randY = this.p5.random(-6, -1);
-            const newParticle = new PhysParticle(new p5.Vector(0, this.p5.height / -4), new p5.Vector(randX, randY), new p5.Vector(0, 0.3), 0, randX / 260, 0, 0.95, 1.5, [255, 255, 255], image, this.settings);
-            this.particles.push(newParticle);
-        }
+        return image;
     }
-    
+
     update(p: p5, deltaTime: number): void {
         this.p5 = p;
-        this.particles.forEach(particle => particle.update(p, deltaTime));
+
+        if (!this.handler) {
+            this.handler = new TwitchMessageHandler(this.p5, this.settings);
+        }
+
+        this.handler.update(p, deltaTime);
+
+        // Debugging
+        if (this.settings.debug && p.mouseIsPressed && this.handler.particles.length < 4) {
+            const dummyMessage = {data: "@badge-info=subscriber/32;badges=broadcaster/1,subscriber/0;client-nonce=ccbb5763ccc35ba1214832781754f6f5;color=#FF4500;display-name=FeatherDerg;emote-only=1;emotes=emotesv2_416d93e1150d47979f1dd9c06aeab1cd:41-56/emotesv2_ee80f2dc06c24dc5bf53fa46d9970552:0-13/emotesv2_f52f89f394414cf58a709ce34c48da2e:15-26/emotesv2_36e1a690d62343358504f26aadff7fa7:28-39;first-msg=0;flags=;id=6bc71771-d641-44f3-8bcf-dd2d4aef7778;mod=0;returning-chatter=0;room-id=437073341;subscriber=1;tmi-sent-ts=1751384189035;turbo=0;user-id=437073341;user-type= :featherderg!featherderg@featherderg.tmi.twitch.tv PRIVMSG #featherderg :feathe99PetJam feathe99HYPE feathe99LOVE feathe99CugaWhat"} as MessageEvent<string>;
+            this.handleMessage(dummyMessage);
+        }
     }
 
     draw(p: p5, deltaTime: number): void {
+        this.handler?.draw(p, deltaTime);
+        
+        // Draw warning when Twitch connection lost
         if (this.websocketClient.readyState == WebSocket.CLOSED) {
             p.textAlign(p.CENTER, p.CENTER);
             p.fill('red');
             p.text("Connection to Twitch lost.\nPlease refresh the page!", 0, 0);
         }
-
-        this.particles.forEach(particle => particle.draw(p, deltaTime));
     }
 
     setChannel(newChannel: string) {
@@ -145,6 +161,57 @@ export class TwitchGenerator implements UsesSettings, Drawable {
         this.websocketClient.send(`JOIN #${newChannel}`);
 
         this.channel = newChannel;
-        this.particles.length = 0;
+    }
+}
+
+enum ParticleType {
+    Fireworks,
+    Leaves,
+    DVD,
+}
+
+export class TwitchMessageHandler implements Drawable, UsesSettings {
+    readonly p5: p5;
+    readonly settings: Settings;
+
+    // Particle-related fields
+    readonly particles: FireworkParticle[] = [];
+    private readonly particleLifetime = 5.0; // seconds
+
+    constructor(p5: p5, settings: Settings) {
+        this.p5 = p5;
+        this.settings = settings;
+    }
+
+    handleMessage(message: Map<p5.Image, number>): void {
+        // Choose a spot to launch the fireworks at
+        const w = this.settings.windowSettings.width;
+        const h = this.settings.windowSettings.height;
+        const x = this.p5.random(-w / 2, w / 2);
+        const y = this.p5.random(-h / 2, h / 2);
+
+        // Spawn all the emotes at once!
+        for (const entry of message) {
+            for (let i = 0; i < entry[1]; i++) {
+                const newParticle = new FireworkParticle(this.p5, this.settings, entry[0], new p5.Vector(x, y))
+                this.particles.push(newParticle);
+            }
+        }
+    }
+
+    update(p: p5, deltaTime: number): void {
+        // Clear out old particles
+        this.particles.forEach(o => {
+            if (o.aliveTime > this.particleLifetime) {
+                this.particles.shift(); // gnarly
+            }
+        });
+
+        this.particles.forEach(particle => particle.update(p, deltaTime));
+        // console.log(`Updated ${this.particles.length} particles.`)
+    }
+
+    draw(p: p5, deltaTime: number): void {
+        this.particles.forEach(particle => particle.draw(p, deltaTime));
     }
 }

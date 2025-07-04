@@ -99,6 +99,8 @@ import { OnClickSpawner } from '@/ts/OnClickSpawner';
 import { TwitchGenerator } from '@/ts/TwitchGenerator';
 import type { Drawable } from '@/ts/Drawable';
 import { DVDSpawner } from '@/ts/DVDSpawner';
+import { LeafParticleBehaviour2 } from '@/ts/particle/LeafParticleBehaviour2';
+import type { PhysParticle } from '@/ts/PhysParticle';
 
 enum SectionEnum {
   Window = "Window Settings",
@@ -111,6 +113,7 @@ enum SectionEnum {
 
 enum Preset {
   Leaves = "Leaves",
+  Leaves2 = "Leaves2",
   Drops = "Drops",
   OnClick = "On-Click",
   Twitch = "Twitch Emotes",
@@ -171,6 +174,11 @@ watchEffect(() => {
   switch (selectedPreset.value) {
     case Preset.Leaves: {
       const newSpawner = new ParticleSpawner(settings, new p5.Vector((settings.windowSettings.width / 2), -(settings.windowSettings.height / 2)), getLeaves(settings), respawnLeaf);
+      spawners[0] = newSpawner;
+      break;
+    }
+    case Preset.Leaves2: {
+      const newSpawner = new ParticleSpawner(settings, new p5.Vector((settings.windowSettings.width / 2), -(settings.windowSettings.height / 2)), getLeaves(settings), (s: PhysParticle, position: p5.Vector, frameRate: number) => {s.physicsState = LeafParticleBehaviour2.spawn(position)});
       spawners[0] = newSpawner;
       break;
     }

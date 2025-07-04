@@ -1,3 +1,4 @@
+import { PhysicsState } from "./particle/PhysicsState";
 import { PhysParticle } from "./PhysParticle";
 import type { Settings } from "./Settings";
 import p5 from 'p5';
@@ -23,7 +24,8 @@ export function getDrops(settings: Settings): Array<PhysParticle> {
         const g = 220 - (Math.random() * 20);
         const b = 220 - (Math.random() * 20);
 
-        particles.push(new PhysParticle(new p5.Vector(Infinity, 0), new p5.Vector(0, 0), new p5.Vector(0, 0), 0, 0, 0, 1, scale, [r, g, b], drop, settings));
+        const state = new PhysicsState(new p5.Vector(Infinity, 0), new p5.Vector(0, 0), new p5.Vector(0, 0));
+        particles.push(new PhysParticle(state, scale, [r, g, b], drop, settings));
     }
 
     return particles;
@@ -34,8 +36,9 @@ export function respawnDrop(s: PhysParticle, position: p5.Vector, frameRate: num
     const a = (v * v);         // factor for acceleration
 
     const heck = 512;
+    const state = s.physicsState;
 
-    s.position.set(20, (-2 * heck) + (Math.random() * heck / 2));
-    s.velocity.set((-80 + (Math.random() * 130)) * v, ((Math.random() * 80) - 60) * v);
-    s.acceleration.set(0, 150 * a);
+    state.position.set(20, (-2 * heck) + (Math.random() * heck / 2));
+    state.velocity.set((-80 + (Math.random() * 130)) * v, ((Math.random() * 80) - 60) * v);
+    state.acceleration.set(0, 150 * a);
 }

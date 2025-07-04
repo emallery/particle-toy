@@ -3,7 +3,7 @@ import type { Settings, UsesSettings } from './Settings';
 import type { Drawable } from './Drawable';
 import type { PhysicsState } from './particle/PhysicsState';
 
-export class PhysParticle implements Drawable, UsesSettings {
+export class PhysParticle2 implements Drawable, UsesSettings {
   physicsState: PhysicsState;
   scale: number;
   tint: number[];
@@ -20,15 +20,15 @@ export class PhysParticle implements Drawable, UsesSettings {
 
   update(p: p5, deltaTime: number) {
     const state = this.physicsState;
-    state.velocity.add(state.acceleration);
-    state.position.add(state.velocity);
+    state.velocity.add(state.acceleration.x * deltaTime, state.acceleration.y * deltaTime);
+    state.position.add(state.velocity.x * deltaTime, state.velocity.y * deltaTime);
 
     // Apply damping force to slow movement in the sprite's current direction
-    // physicsState.velocity.mult(physicsState.damping);
-    state.velocity.x *= state.damping;
+    const dampingToApply = state.velocity.x * state.damping;
+    state.velocity.x -= dampingToApply * deltaTime; // TODO: Talk to Tyler again about modeling damping as a friction force / acceleration when it's not 3am and im a litlle less eeepy
 
-    state.angularVelocity += state.angularAcceleration;
-    state.angle += state.angularVelocity;
+    state.angularVelocity += state.angularAcceleration * deltaTime;
+    state.angle += state.angularVelocity * deltaTime;
   }
 
   draw(p: p5, deltaTime: number) {

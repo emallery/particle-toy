@@ -118,7 +118,18 @@ onMounted(() => {
         s.text(`mouseX: ${s.mouseX.toFixed(3)}\nmouseY: ${s.mouseY.toFixed(3)}\nX: ${(s.mouseX - s.width / 2).toFixed(3)}\nY: ${(s.mouseY - s.height / 2).toFixed(3)}`, s.width / 2 - 6, s.height / -2 + 6);
       }
     };
-  }, holder as HTMLElement);  
+  }, holder as HTMLElement);
+
+  // TODO: Write a better keypress handler, since it has to be global per p5 instance
+  p.keyPressed = (event?: KeyboardEvent) => {
+    // Toggle debug mode
+    if (event?.key === 'd') {
+      props.settings.debug = !props.settings.debug;
+    }
+
+    // Prevent default browser behaviour (e.g. scrolling down on Space pressed)
+    return false;
+  };
 });
 </script>
 
