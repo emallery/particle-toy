@@ -32,13 +32,10 @@ export function getDrops(settings: Settings): Array<PhysParticle> {
 }
 
 export function respawnDrop(s: PhysParticle, position: p5.Vector, frameRate: number) {
-    const v = 1 / frameRate;   // factor for velocity
-    const a = (v * v);         // factor for acceleration
-
     const heck = 512;
     const state = s.physicsState;
 
     state.position.set(20, (-2 * heck) + (Math.random() * heck / 2));
-    state.velocity.set((-80 + (Math.random() * 130)) * v, ((Math.random() * 80) - 60) * v);
-    state.acceleration.set(0, 150 * a);
+    state.velocity.set((-80 + (Math.random() * 130)), ((Math.random() * 80) - 60));
+    state.acceleration.set(0, 150);
 }

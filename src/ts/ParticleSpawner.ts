@@ -1,5 +1,5 @@
 import p5 from "p5";
-import type { PhysParticle2 } from "./PhysParticle2";
+import type { PhysParticle } from "./PhysParticle";
 import type { Settings, UsesSettings } from "./Settings";
 import type { Drawable } from "./Drawable";
 
@@ -7,10 +7,10 @@ export class ParticleSpawner implements UsesSettings, Drawable {
     readonly settings: Settings;
     readonly position: p5.Vector;
 
-    readonly particles: PhysParticle2[] = [];
-    readonly respawn: (s: PhysParticle2, position: p5.Vector, frameRate: number) => void;
+    readonly particles: PhysParticle[] = [];
+    readonly respawn: (s: PhysParticle, position: p5.Vector, frameRate: number) => void;
 
-    constructor(settings: Settings, position: p5.Vector, particles: Array<PhysParticle2>, respawn: (s: PhysParticle2, position: p5.Vector, frameRate: number) => void) {
+    constructor(settings: Settings, position: p5.Vector, particles: Array<PhysParticle>, respawn: (s: PhysParticle, position: p5.Vector, frameRate: number) => void) {
         this.settings = settings;
         this.position = position;
         this.particles = particles;

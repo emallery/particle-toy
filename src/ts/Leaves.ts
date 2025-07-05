@@ -1,10 +1,10 @@
 import { LeafParticleBehaviour } from "./particle/LeafParticleBehaviour";
 import { PhysicsState } from "./particle/PhysicsState";
-import { PhysParticle2 } from "./PhysParticle2";
+import { PhysParticle } from "./PhysParticle";
 import type { Settings } from "./Settings";
 import p5 from 'p5';
 
-export function getLeaves(settings: Settings): Array<PhysParticle2> {
+export function getLeaves(settings: Settings): Array<PhysParticle> {
     let leaf: p5.Image = undefined as unknown as p5.Image;
     let maple: p5.Image = undefined as unknown as p5.Image;
 
@@ -18,7 +18,7 @@ export function getLeaves(settings: Settings): Array<PhysParticle2> {
     dummyP5.preload();
     dummyP5.remove();
 
-    const particles = new Array<PhysParticle2>();
+    const particles = new Array<PhysParticle>();
 
     for (let i = 0; i < 20; i++) {
         if (Math.random() > 0.5) {
@@ -29,7 +29,7 @@ export function getLeaves(settings: Settings): Array<PhysParticle2> {
             const b = 220 - (Math.random() * 20);
 
             const state = new PhysicsState(new p5.Vector(Infinity, 0), new p5.Vector(0, 0), new p5.Vector(10, 0));
-            particles.push(new PhysParticle2(state, scale, [r, g, b], leaf, settings));
+            particles.push(new PhysParticle(state, scale, [r, g, b], leaf, settings));
         }
         else {
             // Maple
@@ -39,14 +39,14 @@ export function getLeaves(settings: Settings): Array<PhysParticle2> {
             const b = 10 - (Math.random() * 10);
 
             const state = new PhysicsState(new p5.Vector(Infinity, 0), new p5.Vector(0, 0), new p5.Vector(10, 0));
-            particles.push(new PhysParticle2(state, scale, [r, g, b], maple, settings));
+            particles.push(new PhysParticle(state, scale, [r, g, b], maple, settings));
         }
     }
 
     return particles;
 }
 
-export function respawnLeaf(s: PhysParticle2, position: p5.Vector, frameRate: number) {
+export function respawnLeaf(s: PhysParticle, position: p5.Vector, frameRate: number) {
     s.physicsState = LeafParticleBehaviour.spawn(frameRate, position);
     // const state = s.physicsState;
     // state.position.set(position);

@@ -9,30 +9,19 @@ export class LeafParticleBehaviour {
         const acceleration = new p5.Vector(0, 0);
         const state = new PhysicsState(position, velocity, acceleration);
 
-        // Set physics properties
-        const v = 1 / frameRate;   // factor for velocity
-        const a = (v * v);         // factor for acceleration
-
         state.position.x += (Math.random() * 40) - 20;
         state.position.y += (Math.random() * 250) - 200;
         state.position.add(positionOffset);
 
-        state.velocity.x = (-200 + (Math.random() * 150)) * v;
-        state.velocity.y = ((Math.random() * 50) - 25) * v;
+        state.velocity.x = (-200 + (Math.random() * 150));
+        state.velocity.y = ((Math.random() * 50) - 25);
 
-        state.damping = 1 - (Math.random() * 30) * a; //(Math.random() * 20) * a;
+        state.damping = (Math.random() * 0.2) + 0.1;
 
-        state.acceleration.y += 30 * a; // gravity
+        state.acceleration.y += 30; // gravity
 
         state.angle = 0;
-        state.angularVelocity = ((Math.random() * 0.02) - 0.01) * 60 * v;
-
-
-        // // AAAA
-        // state.velocity.mult(60);
-        // state.acceleration.mult(60);
-        // state.angularVelocity *= 60;
-        // state.angularAcceleration *= 60;
+        state.angularVelocity = ((Math.random() * 0.02) - 0.01) * 60;
 
         return state;
     }
