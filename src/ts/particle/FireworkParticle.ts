@@ -1,7 +1,7 @@
 import p5 from "p5";
-import type { Settings } from "./Settings";
-import { TimedPhysParticle } from "./TimedSprite";
-import { FireworkParticleBehaviour } from "./particle/FireworkParticleBehaviour";
+import type { Settings } from "../Settings";
+import { TimedPhysParticle } from "../TimedSprite";
+import { FireworkParticleBehaviour } from "../behaviour/FireworkParticleBehaviour";
 
 export class FireworkParticle extends TimedPhysParticle {
     constructor(p: p5, settings: Settings, image: p5.Image, positionOffset?: p5.Vector) {

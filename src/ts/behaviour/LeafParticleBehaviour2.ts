@@ -1,5 +1,5 @@
 import p5 from "p5";
-import { PhysicsState } from "./PhysicsState";
+import { PhysicsState } from "../particle/PhysicsState";
 
 export class LeafParticleBehaviour2 {
 

@@ -1,7 +1,7 @@
-import { LeafParticleBehaviour } from "./particle/LeafParticleBehaviour";
-import { PhysicsState } from "./particle/PhysicsState";
+import { LeafParticleBehaviour } from "../behaviour/LeafParticleBehaviour";
+import { PhysicsState } from "./PhysicsState";
 import { PhysParticle } from "./PhysParticle";
-import type { Settings } from "./Settings";
+import type { Settings } from "../Settings";
 import p5 from 'p5';
 
 export function getLeaves(settings: Settings): Array<PhysParticle> {

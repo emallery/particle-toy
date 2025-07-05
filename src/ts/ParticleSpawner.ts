@@ -1,5 +1,5 @@
 import p5 from "p5";
-import type { PhysParticle } from "./PhysParticle";
+import type { PhysParticle } from "./particle/PhysParticle";
 import type { Settings, UsesSettings } from "./Settings";
 import type { Drawable } from "./Drawable";
 

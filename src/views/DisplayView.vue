@@ -8,8 +8,8 @@
 <script setup lang="ts">
 import P5Component from '@/components/P5Component.vue';
 import type { Drawable } from '@/ts/Drawable';
-import { getDrops, respawnDrop } from '@/ts/Drops';
-import { getLeaves, respawnLeaf } from '@/ts/Leaves';
+import { getDrops, respawnDrop } from '@/ts/particle/Drops';
+import { getLeaves, respawnLeaf } from '@/ts/particle/Leaves';
 import { ParticleSpawner } from '@/ts/ParticleSpawner';
 import { Settings, SpawnerSettings, WindowSettings } from '@/ts/Settings';
 import { TwitchGenerator } from '@/ts/TwitchGenerator';

@@ -93,14 +93,14 @@ import ImagePoolPanel from '@/components/ImagePoolPanel.vue';
 import { Settings, SpawnerSettings, WindowSettings, applyFromString, toString } from '@/ts/Settings';
 import { ParticleSpawner } from '@/ts/ParticleSpawner';
 import p5 from 'p5';
-import { getLeaves, respawnLeaf } from '@/ts/Leaves';
-import { getDrops, respawnDrop } from '@/ts/Drops';
+import { getLeaves, respawnLeaf } from '@/ts/particle/Leaves';
+import { getDrops, respawnDrop } from '@/ts/particle/Drops';
 import { OnClickSpawner } from '@/ts/OnClickSpawner';
 import { TwitchGenerator } from '@/ts/TwitchGenerator';
 import type { Drawable } from '@/ts/Drawable';
 import { DVDSpawner } from '@/ts/DVDSpawner';
-import { LeafParticleBehaviour2 } from '@/ts/particle/LeafParticleBehaviour2';
-import type { PhysParticle } from '@/ts/PhysParticle';
+import { LeafParticleBehaviour2 } from '@/ts/behaviour/LeafParticleBehaviour2';
+import type { PhysParticle } from '@/ts/particle/PhysParticle';
 
 enum SectionEnum {
   Window = "Window Settings",

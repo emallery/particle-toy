@@ -1,6 +1,6 @@
-import { PhysicsState } from "./particle/PhysicsState";
+import { PhysicsState } from "../particle/PhysicsState";
 import { PhysParticle } from "./PhysParticle";
-import type { Settings } from "./Settings";
+import type { Settings } from "../Settings";
 import p5 from 'p5';
 
 export function getDrops(settings: Settings): Array<PhysParticle> {

@@ -1,6 +1,6 @@
 import p5 from "p5";
 import type { Settings } from "../Settings";
-import { PhysicsState } from "./PhysicsState";
+import { PhysicsState } from "../particle/PhysicsState";
 
 export class FireworkParticleBehaviour {
     static spawn(p: p5, settings: Settings, positionOffset: p5.Vector = new p5.Vector(0, 0)): PhysicsState {

@@ -1,7 +1,7 @@
 import p5 from 'p5';
-import type { Settings, UsesSettings } from './Settings';
-import type { Drawable } from './Drawable';
-import type { PhysicsState } from './particle/PhysicsState';
+import type { Settings, UsesSettings } from '../Settings';
+import type { Drawable } from '../Drawable';
+import type { PhysicsState } from '../particle/PhysicsState';
 
 export class PhysParticle implements Drawable, UsesSettings {
   physicsState: PhysicsState;

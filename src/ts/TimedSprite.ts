@@ -1,5 +1,5 @@
 import type p5 from "p5";
-import { PhysParticle } from "./PhysParticle";
+import { PhysParticle } from "./particle/PhysParticle";
 
 export class TimedPhysParticle extends PhysParticle {
     aliveTime = 0.0;

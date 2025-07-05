@@ -1,7 +1,7 @@
 import p5 from "p5";
 import type { Drawable } from "./Drawable";
 import type { Settings, UsesSettings } from "./Settings";
-import { FireworkParticle as FireworkParticle } from "./FireworkParticle";
+import { FireworkParticle as FireworkParticle } from "./particle/FireworkParticle";
 
 export class TwitchGenerator implements Drawable, UsesSettings {
     readonly settings: Settings;

@@ -1,5 +1,5 @@
 import p5 from "p5";
-import { PhysicsState } from "./PhysicsState";
+import { PhysicsState } from "../particle/PhysicsState";
 
 export class LeafParticleBehaviour {
     static spawn(frameRate: number, positionOffset: p5.Vector = new p5.Vector(0, 0)): PhysicsState {
