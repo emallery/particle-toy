@@ -25,7 +25,7 @@ export class PhysParticle implements Drawable, UsesSettings {
 
     // Apply damping force to slow movement in the sprite's current direction
     const dampingToApply = state.velocity.x * state.damping;
-    state.velocity.x -= dampingToApply * deltaTime; // TODO: Talk to Tyler again about modeling damping as a friction force / acceleration when it's not 3am and im a litlle less eeepy
+    state.velocity.x -= dampingToApply * deltaTime; // TODO: Look into modeling damping as a friction force / acceleration when it's not 3am and im a litlle less eeepy
 
     state.angularVelocity += state.angularAcceleration * deltaTime;
     state.angle += state.angularVelocity * deltaTime;

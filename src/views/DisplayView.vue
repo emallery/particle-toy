@@ -2,7 +2,8 @@
   <div v-if="oopsie">
     <p>Oops!</p>
   </div>
-  <P5Component @keyup.enter="console.log('AAAAAAAAAAA')" :spawners="spawners" :settings="settings" />
+  <!-- TODO: Fix keyup detection with p5 stuff -->
+  <P5Component @keyup.enter="console.log('TODO: Figure out why this isn\'t working')" :spawners="spawners" :settings="settings" />
 </template>
 
 <script setup lang="ts">

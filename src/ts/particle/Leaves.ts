@@ -1,4 +1,4 @@
-import { LeafParticleBehaviour } from "../behaviour/LeafParticleBehaviour";
+import { LeafParticleBehaviour } from "../behaviour/Leaf";
 import { PhysicsState } from "./PhysicsState";
 import { PhysParticle } from "./PhysParticle";
 import type { Settings } from "../Settings";
@@ -48,24 +48,4 @@ export function getLeaves(settings: Settings): Array<PhysParticle> {
 
 export function respawnLeaf(s: PhysParticle, position: p5.Vector, frameRate: number) {
     s.physicsState = LeafParticleBehaviour.spawn(frameRate, position);
-    // const state = s.physicsState;
-    // state.position.set(position);
-    // state.velocity.set(0, 0);
-    // state.acceleration.set(0, 0);
-
-    // const v = 1 / frameRate;   // factor for velocity
-    // const a = (v * v);         // factor for acceleration
-
-    // state.position.x += (Math.random() * 40) - 20;
-    // state.position.y += (Math.random() * 250) - 200;
-
-    // state.velocity.x = (-200 + (Math.random() * 150)) * v;
-    // state.velocity.y = ((Math.random() * 50) - 25) * v;
-
-    // state.damping = 1 - (Math.random() * 30) * a; //(Math.random() * 20) * a;
-
-    // state.acceleration.y += 30 * a; // gravity
-
-    // state.angle = 0;
-    // state.angularVelocity = ((Math.random() * 0.02) - 0.01) * 60 * v;
 }

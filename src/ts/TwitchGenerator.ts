@@ -135,7 +135,7 @@ export class TwitchGenerator implements Drawable, UsesSettings {
 
         // Debugging
         if (this.settings.debug && p.mouseIsPressed && this.handler.particles.length < 4) {
-            const dummyMessage = {data: "@badge-info=subscriber/32;badges=broadcaster/1,subscriber/0;client-nonce=ccbb5763ccc35ba1214832781754f6f5;color=#FF4500;display-name=FeatherDerg;emote-only=1;emotes=emotesv2_416d93e1150d47979f1dd9c06aeab1cd:41-56/emotesv2_ee80f2dc06c24dc5bf53fa46d9970552:0-13/emotesv2_f52f89f394414cf58a709ce34c48da2e:15-26/emotesv2_36e1a690d62343358504f26aadff7fa7:28-39;first-msg=0;flags=;id=6bc71771-d641-44f3-8bcf-dd2d4aef7778;mod=0;returning-chatter=0;room-id=437073341;subscriber=1;tmi-sent-ts=1751384189035;turbo=0;user-id=437073341;user-type= :featherderg!featherderg@featherderg.tmi.twitch.tv PRIVMSG #featherderg :feathe99PetJam feathe99HYPE feathe99LOVE feathe99CugaWhat"} as MessageEvent<string>;
+            const dummyMessage = {data: "@badge-info=subscriber/32;badges=broadcaster/1,subscriber/0;client-nonce=123456;color=#FF4500;display-name=None;emote-only=1;emotes=emotesv2_416d93e1150d47979f1dd9c06aeab1cd:41-56/emotesv2_ee80f2dc06c24dc5bf53fa46d9970552:0-13/emotesv2_f52f89f394414cf58a709ce34c48da2e:15-26/emotesv2_36e1a690d62343358504f26aadff7fa7:28-39;first-msg=0;flags=;id=6bc71771-d641-44f3-8bcf-dd2d4aef7778;mod=0;returning-chatter=0;room-id=437073341;subscriber=1;tmi-sent-ts=1751384189035;turbo=0;user-id=437073341;user-type= :none!none@none.tmi.twitch.tv PRIVMSG #none :feathe99PetJam feathe99HYPE feathe99LOVE feathe99CugaWhat"} as MessageEvent<string>;
             this.handleMessage(dummyMessage);
         }
     }
