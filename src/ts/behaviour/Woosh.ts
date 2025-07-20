@@ -1,7 +1,7 @@
 import p5 from "p5";
 import { PhysicsState } from "../particle/PhysicsState";
 
-export class LeafParticleBehaviour2 {
+export class WooshParticleBehaviour {
 
     static spawn(positionOffset: p5.Vector = new p5.Vector(0, 0)): PhysicsState {
 
